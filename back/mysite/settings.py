@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls',
     'rest_framework',
     'corsheaders',
+    'usuario',
+    'formulario'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+AUTH_USER_MODEL = 'usuario.Usuario'
