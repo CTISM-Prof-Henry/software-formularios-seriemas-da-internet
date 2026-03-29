@@ -25,7 +25,7 @@ function App() {
 
       <div className={"container_text"}>
         <h2>Resposta do Backend:</h2>
-        <p style={{ fontSize: '1.2rem', fontWeight: 'bold'}}>
+        <p>
           {mensagemDoDjango}
         </p>
       </div>
