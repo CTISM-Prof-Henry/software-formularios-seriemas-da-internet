@@ -32,7 +32,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = list(UserAdmin.fieldsets) + [
         ('Informações Extras', {
             'classes': ['wide'],
-            'fields': ['email', 'first_name', 'last_name', 'matricula']
+            'fields': ['matricula']
         })
     ]
 

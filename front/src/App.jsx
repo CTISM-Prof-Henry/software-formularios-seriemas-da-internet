@@ -6,7 +6,7 @@ function App() {
   const [usuarios, setUsuarios] = useState([])
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/polls/api/listar_usuarios/')
+    fetch('http://127.0.0.1:8000/api/usuarios')
         .then(response => response.json())
         .then(data => {
           setUsuarios(data);
@@ -18,21 +18,36 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>Enquetes do Sistema 📊</h1>
 
-      {usuarios.length === 0 ? (
-        <p>Nenhuma pergunta encontrada no banco de dados.</p>
-      ) : (
-        <ul>
-          {usuarios.map(usuario => (
-            <li key={usuario.userId} style={{ marginBottom: '10px' }}>
-              <strong>{usuario.nome}</strong>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+      <body>
+        <h1 className="title">Gestor de Risco</h1>
+
+        <div className="container-login">
+
+            <form action="post" >
+                <h1>Login</h1>
+                <label className="login-label">Entre com suas credenciais</label>
+
+                <div>
+                    <label>Matricula</label>
+                    <input type="email" id="email" placeholder="seu@email.com" required/>
+                </div>
+
+                <div>
+                    <label>Senha</label>
+                    <input type="password" id="senha" placeholder="*******" required/>
+                </div>
+
+                <div className="login-btn">
+                    <button type="submit">Entrar</button>
+                </div>
+
+                <a href="">Não tenho uma conta</a>
+
+            </form>
+
+        </div>
+      </body>
   );
 }
 
