@@ -1,6 +1,6 @@
 
 
-body {
+main {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,7 +10,7 @@ body {
   background-color: rgba(135, 135, 135, 0.07);
 }
 
-body .title {
+main .title {
   position: absolute;
   top: 5px;
   left: 40px;
@@ -23,6 +23,7 @@ body .title {
   display: flex;
   flex-direction: column;
   padding: 25px;
+  padding-bottom: 0;
   width: 400px;
   font-family: sans-serif;
   background-color: #ffff;
@@ -84,18 +85,17 @@ body .title {
 }
 
 a {
-
+  padding: 10px;
+  font-size: 0.9rem;
 }
-
-
 
 
 @media (max-width: 460px) {
 
   body .title {
     top: 0px;
-    left: 0;
-    position: relative;
+    left: 15vw;
+    position: absolute;
     text-align: center;
 }
 }
