@@ -1,6 +1,7 @@
 #Como usar
 
 - Tenha instalado o DockerDesktop
+- Abra o DockerDesktop
 - Siga os passos
 
 ##Clone o repositorio
