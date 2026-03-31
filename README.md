@@ -16,3 +16,5 @@
 ### Se necessario rode
 `docker-compose restart`
 
+## No navegador acesse http://localhost:5173
+
