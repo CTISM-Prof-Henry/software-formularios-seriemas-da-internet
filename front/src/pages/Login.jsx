@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import '../style/Login.css'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+
 
 function Login() {
     const [matricula, setMatricula] = useState('')
@@ -12,7 +13,7 @@ function Login() {
 
     const buscaUsuario = async (evento) => {
         evento.preventDefault()
-        
+
         try {
 
             const resposta = await
@@ -34,6 +35,7 @@ function Login() {
 
                 setMensagemErro('');
 
+                localStorage.setItem('tokenAcesso', dados.tokenAcesso)
                 navigate('/app')
             } else  {
                 setMensagemErro("Matricula ou senha incorretos!");
@@ -76,7 +78,7 @@ function Login() {
 
             </form>
 
-            <a href="#">Não tenho uma conta</a>
+            <Link to="cadastro/">Não tenho uma conta</Link>
 
         </div>
       </main>
