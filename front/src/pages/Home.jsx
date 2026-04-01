@@ -5,10 +5,10 @@ function Home() {
 
 
     return (
-        <body>
+        <div>
 
             <h1>Logado com sucesso</h1>
-        </body>
+        </div>
 
 
 

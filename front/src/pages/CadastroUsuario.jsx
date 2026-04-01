@@ -6,9 +6,9 @@ function CadastroUsuario() {
 
     return  (
 
-        <body>
+        <div>
             <h1>Cadastro de usuario</h1>
-        </body>
+        </div>
     );
 
 }
