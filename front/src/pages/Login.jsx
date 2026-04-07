@@ -1,15 +1,20 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+import {useState} from 'react'
 import '../style/Login.css'
-import { useNavigate, Link } from 'react-router-dom'
+import {useNavigate, Link} from 'react-router-dom'
 
 
 function Login() {
+    const [isLogin, setIsLogin] = useState(true)
+
     const [matricula, setMatricula] = useState('')
-    const [senha, setSenha] =  useState('')
+    const [senha, setSenha] = useState('')
     const [mensagemErro, setMensagemErro] = useState('')
 
-    const navigate  = useNavigate()
+    const [email, setEmail] = useState('')
+    const [primeiroNome, setPrimeiroNome] = useState('')
+    const [segundoNome, setSegundoNome] = useState('')
+
+    const navigate = useNavigate()
 
     const buscaUsuario = async (evento) => {
         evento.preventDefault()
@@ -37,7 +42,7 @@ function Login() {
 
                 localStorage.setItem('tokenAcesso', dados.tokenAcesso)
                 navigate('/app')
-            } else  {
+            } else {
                 setMensagemErro("Matricula ou senha incorretos!");
             }
 
@@ -47,42 +52,60 @@ function Login() {
         }
     }
 
-  return (
+    // const registrarUsuario = async (evento) => {
+    //     evento.preventDefault();
+    //     console.log("Enviando dados para cadastro:", { matricula, senha, email, primeiroNome, segundoNome });
+    //
+    // };
 
-      <main>
-        <h1 className="title">Gestor de Risco</h1>
+    return (
 
-        <div className="container-login">
+        <main>
 
-            <form onSubmit={buscaUsuario}>
-                <h1>Login</h1>
-                <label className="login-label">Entre com suas credenciais</label>
+            <div className="back">
 
-                <div>
-                    <label>Matricula</label>
-                    <input type="text" value={matricula} placeholder="20*******"
-                           onChange={(e) => setMatricula(e.target.value)} required/>
-                </div>
+                <section>
 
-                <div>
-                    <label>Senha</label>
-                    <input type="password" value={senha} placeholder="*******"
-                           onChange={(e) => setSenha(e.target.value)} required/>
-                </div>
+                    <div className="title">
+                        <h1>Gestor de Risco</h1>
+                        <p>Sistema de Gestão de Risco Institucional</p>
+                    </div>
 
-                {mensagemErro && <p style={{ color: 'red' }}>{mensagemErro}</p>}
+                    <form onSubmit={buscaUsuario}>
 
-                <div className="login-btn">
-                    <button type="submit">Entrar</button>
-                </div>
+                            <div className="input-group">
+                                <label>Matricula</label>
+                                <input type="text" value={matricula} placeholder="20*******" onChange={
+                                    (e) => setMatricula(e.target.value)} required/>
+                            </div>
 
-            </form>
+                            <div className="input-group">
+                                <label>Senha</label>
+                                <input type="password" value={senha} placeholder="*******" onChange={(e) => setSenha(e.target.value)} required/>
+                            </div>
 
-            <Link to="cadastro/">Não tenho uma conta</Link>
+                            {mensagemErro && <p style={{color: 'red'}}>{mensagemErro}</p>}
 
-        </div>
-      </main>
-  );
+                            <div className="post-btn">
+                                <button type="submit">Entrar</button>
+
+                            </div>
+                        </form>
+
+                    <div className="links">
+                        <Link to="#" className="criar-conta">Criar conta</Link>
+                        <Link to="#" className="esqueci-senha">Esqueci minha senha</Link>
+                    </div>
+
+                </section>
+
+
+
+            </div>
+
+
+        </main>
+    );
 }
 
 export default Login
