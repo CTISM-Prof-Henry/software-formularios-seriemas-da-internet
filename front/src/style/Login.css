@@ -1,104 +1,78 @@
-
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100vh;
-  color: #0f0f0f;
-  background-color: rgba(135, 135, 135, 0.07);
-}
-
-main .title {
-  position: absolute;
-  top: 5px;
-  left: 40px;
-  font-size: 2.5rem;
-  letter-spacing: 2.5px;
 }
 
 
-.container-login{
+.back{
+  height: 70%;
+  background-color: #15304D;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+section {
+
   display: flex;
   flex-direction: column;
-  padding: 25px;
-  padding-bottom: 0;
-  width: 400px;
-  font-family: sans-serif;
-  background-color: #ffff;
+  width: 25vw;
+  background-color: #FFFFFF;
+  padding: 40px;
   border-radius: 15px;
-  box-shadow: 0px 0px 2px rgba(135, 135, 135, 0.73);
-  text-align: center;
-  color: rgba(135, 135, 135, 0.73);
-   letter-spacing: 1px;
+  gap: 30px;
 
 }
 
+.title {
 
-.container-login h1 {
-  text-align: center;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1.5rem;
-  font-weight: bolder;
-  margin-top: 5px;
-  color: #1b1b1b;
-  letter-spacing: normal;
+  & h1 {
+    font-weight: normal;
+    color: var(--dark-blue);
+
+  }
+
+  & p {
+    color: var(--text-light);
+  }
+
 }
 
-.container-login div {
+.input-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-top: 10px;
-
-  & label {
-    text-align: left;
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: rgb(41, 41, 41);
-  }
+  gap: 10px;
 
   & input {
-    background-color: rgba(135, 135, 135, 0.09);
-    border: none;
-    border-radius: 5px;
     padding: 8px;
-    color: #1b1b1b;
+    border: 1px solid var(--text-light);
   }
 }
 
-.container-login a {
-  color: #1b1b1b;
+.links {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.login-btn {
-  margin-top: 20px;
-
-  & button {
-    padding: 8px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-}
-
-a {
+.post-btn button{
+  width: 100%;
+  margin-top: 25px;
   padding: 10px;
-  font-size: 0.9rem;
+  border-radius: 0px;
+  border: 1px solid;
+  background-color: var(--dark-blue);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-
-@media (max-width: 460px) {
-
-  body .title {
-    top: 0px;
-    left: 15vw;
-    position: absolute;
-    text-align: center;
+.post-btn button:hover {
+  background-color: var(--light-blue);
 }
-}
-
-
 
