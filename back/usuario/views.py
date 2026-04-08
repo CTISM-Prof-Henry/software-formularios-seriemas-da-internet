@@ -24,6 +24,7 @@ def listar_usuarios(request):
     return Response(serializer.data)
 
 @csrf_exempt
+@api_view(['POST'])
 def fazer_login(request):
 
     if  (request.method == 'POST'):
@@ -60,6 +61,13 @@ def fazer_login(request):
                         'usuario_nome': usuario.first_name,
                         'tokenAcesso': token
                     }, status=200)
+
+                else:
+                    return JsonResponse({'erro': 'Senha incorreta'}, status=401)
+
+            else:
+                return JsonResponse({'erro': 'Usuário não encontrado'}, status=404)
+
 
         except Exception as e:
 

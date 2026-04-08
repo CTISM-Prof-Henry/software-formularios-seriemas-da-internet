@@ -6,8 +6,9 @@ function CadastroUsuario() {
 
     const navigate = useNavigate()
     const [form, setForm] = useState({
-        nome: "",
-        sobrenome: "",
+        username: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         matricula: "",
@@ -26,13 +27,18 @@ function CadastroUsuario() {
       async function handleSubmit(evento) {
               evento.preventDefault();
 
+              const dadosParaEnviar = {
+                ...form,
+                username: form.matricula
+              };
+
               try {
                   const response = await fetch("http://localhost:8000/api/cadastro/", {
                   method: "POST",
                   headers: {
                       "Content-Type": "application/json"
                   },
-                    body: JSON.stringify(form)
+                    body: JSON.stringify(dadosParaEnviar)
                   });
 
 
@@ -77,39 +83,39 @@ function CadastroUsuario() {
 
                                 <div>
                                     <label>Nome</label>
-                                    <input type="text" name="nome" placeholder="" onChange={handleChange} required/>
+                                    <input type="text" name="first_name" placeholder="" onChange={handleChange} value={form.first_name} required/>
                                 </div>
 
                                 <div>
                                     <label>Sobrenome</label>
-                                    <input type="text" name="sobrenome" placeholder="" onChange={handleChange} required/>
+                                    <input type="text" name="last_name" placeholder="" onChange={handleChange} value={form.last_name} required/>
                                 </div>
 
                             </div>
 
                             <div className="input-group">
                                 <label>E-mail institucional</label>
-                                <input type="text" name="email" placeholder="email@ufsm.acad.br" onChange={handleChange} required/>
+                                <input type="email" name="email" placeholder="email@ufsm.acad.br" onChange={handleChange} value={form.email} required/>
                             </div>
 
                             <div className="input-group">
                                 <label>Senha</label>
-                                <input type="password" name="password" placeholder="*******" onChange={handleChange} required/>
+                                <input type="password" name="password" placeholder="*******" onChange={handleChange} value={form.password} required/>
                             </div>
 
                             <div className="input-group">
                                 <label>Matricula</label>
-                                <input type="text" name="matricula" placeholder="*******" onChange={handleChange} required/>
+                                <input type="text" name="matricula" placeholder="*******" onChange={handleChange} value={form.matricula} required/>
                             </div>
 
                             <div className="input-group">
                                 <label>Setor / Unidade</label>
-                                <input type="text" name="setor" placeholder="Politecnico" onChange={handleChange} required/>
+                                <input type="text" name="setor" placeholder="Politecnico" onChange={handleChange} value={form.setor} required/>
                             </div>
 
                             <div className="input-group">
                                 <label>Perfil de acesso</label>
-                                <select type="text" name="perfil" placeholder="*******" className="select" onChange={handleChange} required>
+                                <select type="text" name="perfil" placeholder="*******" className="select" onChange={handleChange} value={form.perfil} required>
 
                                     <option value="" disabled>Selecione um perfil</option>
                                     <option value="Gestor de Risco">Gestor de Risco</option>
