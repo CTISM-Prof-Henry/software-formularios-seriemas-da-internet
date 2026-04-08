@@ -76,7 +76,7 @@ function RecuperarSenha() {
 
 
                     <div className="links">
-                        <Link to="/recuperar-senha" className="voltar">Voltar ao login</Link>
+                        <Link to="/" className="voltar">Voltar ao login</Link>
                     </div>
 
                 </section>
