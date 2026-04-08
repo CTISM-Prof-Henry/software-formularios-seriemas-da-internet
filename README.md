@@ -18,3 +18,5 @@
 
 ## No navegador acesse http://localhost:5173
 
+## Projeto no Figma: https://www.figma.com/design/AGh7cnJG0QBh9PpLi7pjqv/Gestor-de-Risco?node-id=0-1&t=bYHcgpCLF86ryook-1
+
