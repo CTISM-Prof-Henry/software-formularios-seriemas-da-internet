@@ -9,6 +9,11 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 @api_view(['GET'])
 def listar_usuarios(request):
@@ -64,3 +69,66 @@ def fazer_login(request):
             }, status=500)
 
     return JsonResponse({'erro': 'Método não permitido'}, status=405)
+
+
+@csrf_exempt
+@api_view(['POST'])
+def cadastrar_usuario(request):
+
+
+    if request.method == 'POST':
+
+        try :
+
+            dados = json.loads(request.body)
+            serializer = UsuarioSerializer(data=dados)
+
+            if serializer.is_valid():
+                serializer.save()
+                print(f"Dados: {serializer.data}")
+
+                return JsonResponse({"messagem": "Usuario cadastrado com sucesso!"}, status=201)
+
+
+            return JsonResponse({"erro": "Dados invalidos", "detalhes": serializer.errors}, status=400)
+
+        except Exception as e:
+            return JsonResponse({"erro": "Falha do servidor", "detalhes": str(e)}, status=500)
+
+
+@csrf_exempt
+@api_view(['POST'])
+def reset_senha(request):
+
+    email = request.data.get('email')
+    user = Usuario.objects.filter(email=email).first()
+
+
+    try:
+
+        if user:
+
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+
+            link_reset = f"http://localhost:5173/recuperar-senha/{uid}/{token}"
+
+            send_mail(
+                "Redefinicao de Senha - Sistema",
+                f"Clique no link para resetar sua senha: {link_reset}",
+                "noreply@meusistema.com",
+                [user.email],
+                fail_silently=True,
+            )
+
+            return JsonResponse({
+                "message": "Se um email existir, um link foi enviado.",
+                "uid": uid,
+                "token": token,
+                }, status=200)
+
+        return JsonResponse({"erro": "Email nao existe entre os usuairos"}, status=400)
+
+    except Exception as e:
+
+        return JsonResponse({"erro": "Erro de servidor"}, status=500)

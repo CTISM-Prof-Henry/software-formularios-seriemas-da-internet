@@ -4,15 +4,10 @@ import {useNavigate, Link} from 'react-router-dom'
 
 
 function Login() {
-    const [isLogin, setIsLogin] = useState(true)
 
     const [matricula, setMatricula] = useState('')
     const [senha, setSenha] = useState('')
     const [mensagemErro, setMensagemErro] = useState('')
-
-    const [email, setEmail] = useState('')
-    const [primeiroNome, setPrimeiroNome] = useState('')
-    const [segundoNome, setSegundoNome] = useState('')
 
     const navigate = useNavigate()
 
@@ -28,7 +23,7 @@ function Login() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        matricula: matricula,
+                        email: matricula,
                         senha: senha
                     })
                 })
@@ -52,12 +47,6 @@ function Login() {
         }
     }
 
-    // const registrarUsuario = async (evento) => {
-    //     evento.preventDefault();
-    //     console.log("Enviando dados para cadastro:", { matricula, senha, email, primeiroNome, segundoNome });
-    //
-    // };
-
     return (
 
         <main>
@@ -71,7 +60,7 @@ function Login() {
                         <p>Sistema de Gestão de Risco Institucional</p>
                     </div>
 
-                    <form onSubmit={buscaUsuario}>
+                    <form onSubmit={buscaUsuario} className="form">
 
                             <div className="input-group">
                                 <label>Matricula</label>
@@ -88,13 +77,12 @@ function Login() {
 
                             <div className="post-btn">
                                 <button type="submit">Entrar</button>
-
                             </div>
                         </form>
 
                     <div className="links">
-                        <Link to="#" className="criar-conta">Criar conta</Link>
-                        <Link to="#" className="esqueci-senha">Esqueci minha senha</Link>
+                        <Link to="/recuperar-senha" className="esqueci-senha">Esqueci minha senha</Link>
+                        <Link to="/cadastro" className="criar-conta">Criar conta</Link>
                     </div>
 
                 </section>

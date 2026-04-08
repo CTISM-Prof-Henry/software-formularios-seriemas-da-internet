@@ -1,16 +1,139 @@
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 
 
 function CadastroUsuario() {
 
+    const navigate = useNavigate()
+    const [form, setForm] = useState({
+        nome: "",
+        sobrenome: "",
+        email: "",
+        password: "",
+        matricula: "",
+        setor: "",
+        perfil: ""
+      });
+
+      function handleChange(e) {
+        setForm({
+          ...form,
+          [e.target.name]: e.target.value
+        });
+      }
 
 
-    return  (
+      async function handleSubmit(evento) {
+              evento.preventDefault();
 
-        <div>
-            <h1>Cadastro de usuario</h1>
-        </div>
-    );
+              try {
+                  const response = await fetch("http://localhost:8000/api/cadastro/", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                    body: JSON.stringify(form)
+                  });
 
+
+                  if (response.ok) {
+
+                      const data = await response.json();
+                      console.log(data);
+
+                      console.log("Usuário cadastrado!");
+                      navigate('/')
+                  } else {
+
+                      const isJson = response.headers.get("content-type")?.includes("application/json");
+                      const errorData = isJson ? await response.json() : await response.text();
+
+                      console.error("Erro ao cadastrar", errorData);
+                  }
+
+              } catch (erro) {
+                  console.log("Erro ao conectar com o servidor: ", erro);
+              }
+
+          }
+
+
+      return (
+
+          <main>
+
+            <div className="back">
+
+                <section>
+
+                    <div className="title">
+                        <h1>Criar conta</h1>
+                        <p>Preencha os dados para solicitar acesso</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit}>
+
+                            <div className="input-group double-input">
+
+                                <div>
+                                    <label>Nome</label>
+                                    <input type="text" name="nome" placeholder="" onChange={handleChange} required/>
+                                </div>
+
+                                <div>
+                                    <label>Sobrenome</label>
+                                    <input type="text" name="sobrenome" placeholder="" onChange={handleChange} required/>
+                                </div>
+
+                            </div>
+
+                            <div className="input-group">
+                                <label>E-mail institucional</label>
+                                <input type="text" name="email" placeholder="email@ufsm.acad.br" onChange={handleChange} required/>
+                            </div>
+
+                            <div className="input-group">
+                                <label>Senha</label>
+                                <input type="password" name="password" placeholder="*******" onChange={handleChange} required/>
+                            </div>
+
+                            <div className="input-group">
+                                <label>Matricula</label>
+                                <input type="text" name="matricula" placeholder="*******" onChange={handleChange} required/>
+                            </div>
+
+                            <div className="input-group">
+                                <label>Setor / Unidade</label>
+                                <input type="text" name="setor" placeholder="Politecnico" onChange={handleChange} required/>
+                            </div>
+
+                            <div className="input-group">
+                                <label>Perfil de acesso</label>
+                                <select type="text" name="perfil" placeholder="*******" className="select" onChange={handleChange} required>
+
+                                    <option value="" disabled>Selecione um perfil</option>
+                                    <option value="Gestor de Risco">Gestor de Risco</option>
+                                    <option value="Colaborador">Colaborador</option>
+                                    <option value="Auditor">Auditor</option>
+
+                                </select>
+                            </div>
+
+                            <div className="post-btn">
+                                <button type="submit">Solicitar acesso</button>
+                            </div>
+                        </form>
+
+                    <div className="links">
+                        <Link to="/" className="criar-conta">Voltar</Link>
+                    </div>
+
+                </section>
+            </div>
+
+        </main>
+
+      );
 }
 
 export default CadastroUsuario
