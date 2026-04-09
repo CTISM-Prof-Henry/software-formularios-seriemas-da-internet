@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
@@ -22,6 +24,29 @@ def listar_usuarios(request):
 
     serializer = UsuarioSerializer(usuarios, many=True)
     return Response(serializer.data)
+
+@csrf_exempt
+@api_view(['GET'])
+def get_usuario(request, uid):
+
+    try:
+        userId = force_str(urlsafe_base64_decode(uid))
+
+        user = Usuario.objects.get(pk=userId)
+
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+
+        user = None
+
+    if user:
+        serializer = UsuarioSerializer(user, many=False)
+
+        return Response(serializer.data)
+
+    else:
+
+        return Response({"error": "Usuario nao existe!"})
+
 
 @csrf_exempt
 @api_view(['POST'])
@@ -53,13 +78,15 @@ def fazer_login(request):
 
                     refresh = RefreshToken.for_user(usuario)
                     token =  str(refresh.access_token)
+                    uid = urlsafe_base64_encode(force_bytes(usuario.pk))
 
                     print(f"TokenAcesso: {token}")
                     return JsonResponse({
                         'mensagem': 'Login realizado com sucesso',
                         'usuario_id': usuario.id,
                         'usuario_nome': usuario.first_name,
-                        'tokenAcesso': token
+                        'tokenAcesso': token,
+                        'uid': uid
                     }, status=200)
 
                 else:
