@@ -26,6 +26,8 @@
 ---
 config:
   layout: dagre
+  look: neo
+  theme: default
 ---
 classDiagram
 direction TB
@@ -116,11 +118,17 @@ direction TB
 	    +void atualizar()
     }
 
+    class MatrizRisco {
+        +Grid gerarMatriz()
+        +void plotarRiscos()
+        +List filtrarPorNivel()
+    }
+
     Usuario -- Planejamento
     Desafio -- Risco
     Risco -- Identificacao
-    Risco -- Avaliacao
-    Risco -- Tratamento
+    Risco "0" -- "1" Avaliacao
+    Risco "0" -- "1" Tratamento
     Usuario -- Risco
     Planejamento -- Desafio
     Relatorio -- Planejamento
