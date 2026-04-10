@@ -21,6 +21,111 @@
 
 ## Projeto no Figma: https://www.figma.com/design/AGh7cnJG0QBh9PpLi7pjqv/Gestor-de-Risco?node-id=0-1&t=bYHcgpCLF86ryook-1
 
+## Diagrama de Classes
+```mermaid
+---
+config:
+  layout: dagre
+---
+classDiagram
+direction TB
+    class Usuario {
+	    -Serial id
+	    +String nome
+	    +String email
+	    -String senha
+	    +String setor
+	    +String perfil
+	    +Boolean login()
+	    +void logout()
+	    +void recuperarSenha()
+	    +Risco registrarRisco()
+    }
+
+    class Planejamento {
+	    -serial id_planejamento
+	    +int ano
+	    +String descricao
+	    +Date data_inicio
+	    +Date data_final
+	    +void criarPlanejamento()
+	    +void encerrar()
+	    +List listarDesafios()
+    }
+
+    class Risco {
+	    -serial id_risco
+	    +String descricao
+	    +CategoriaRisco categoria
+	    +String responsavel
+	    +Date data_criacao
+	    +StatusRisco Status
+	    +int calcularNivel()
+	    +void avancarEtapa()
+	    +Etapa getEtapaAtual()
+    }
+
+    class Desafio {
+	    -serial id_desafio
+	    +int numero
+	    +String nome
+	    +String descricao
+	    +float calcularProgresso()
+	    +List listarRiscos()
+    }
+
+    class Relatorio {
+	    -serial id_relatorio
+	    +String tipo
+	    +Date data_geracao
+	    +void gerar()
+	    +File exportar()
+    }
+
+    class Identificacao {
+	    -serial id_identificacao
+	    +String descricao_risco
+	    +String causas
+	    +String irregularidades
+	    +Date data_registro
+	    +void registrar()
+	    +Boolean validar()
+    }
+
+    class Avaliacao {
+	    -serial id_avaliacao
+	    +int probabilidade
+	    +int impacto
+	    -int nivel_risco
+	    +String contexto
+	    +NivelRisco classificacao
+	    +int calcularNivel()
+	    -NivelRisco classificar()
+    }
+
+    class Tratamento {
+	    -serial id_tratamento
+	    +RespostaRisco resposta
+	    +String acao
+	    +String responsavel
+	    +Date prazo
+	    +int prob_residual
+	    +int impacto_residual
+	    +String indicadores
+	    +void registrar()
+	    +void atualizar()
+    }
+
+    Usuario -- Planejamento
+    Desafio -- Risco
+    Risco -- Identificacao
+    Risco -- Avaliacao
+    Risco -- Tratamento
+    Usuario -- Risco
+    Planejamento -- Desafio
+    Relatorio -- Planejamento
+```
+
 # Título do repositório
 
 Descrição curta do repositório.
