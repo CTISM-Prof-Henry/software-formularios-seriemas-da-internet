@@ -134,6 +134,10 @@ direction TB
     Relatorio -- Planejamento
 ```
 
+## Diagrama do Banco de Dados
+
+![Diagrama do Banco de Dados](./assets/documento.pdf)
+
 # Título do repositório
 
 Descrição curta do repositório.
