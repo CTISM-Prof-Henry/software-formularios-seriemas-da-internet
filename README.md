@@ -136,7 +136,7 @@ direction TB
 
 ## Diagrama do Banco de Dados
 
-![Diagrama do Banco de Dados](./assets/documento.pdf)
+![Diagrama do Banco de Dados](./assets/bd.png)
 
 # Título do repositório
 
