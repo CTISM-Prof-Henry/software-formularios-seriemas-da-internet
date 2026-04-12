@@ -50,7 +50,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'usuario',
-    'formulario'
+    'identificacao',
+    'relatorio',
+    'risco',
+    'tratamento',
+    'desafio',
+    'avaliacao'
 ]
 
 MIDDLEWARE = [

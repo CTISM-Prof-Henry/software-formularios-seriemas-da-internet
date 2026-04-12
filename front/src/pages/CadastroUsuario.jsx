@@ -70,7 +70,7 @@ function CadastroUsuario() {
 
             <div className="back">
 
-                <section>
+                <section className="section-cadastro">
 
                     <div className="title">
                         <h1>Criar conta</h1>

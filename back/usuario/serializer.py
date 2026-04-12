@@ -7,14 +7,13 @@ class UsuarioSerializer(serializers.ModelSerializer):
         # fields = '__all__'
 
         fields = ['id',
-                  'username',
+                  'first_name',
+                  'last_name',
                   'email',
                   'password',
                   'matricula',
                   'setor',
-                  'perfil_acesso', 
-                  'first_name',
-                  'last_name',
+                  'perfil_acesso',
                   'date_joined'
         ]
 
