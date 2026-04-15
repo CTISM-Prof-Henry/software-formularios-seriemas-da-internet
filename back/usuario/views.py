@@ -67,7 +67,6 @@ def fazer_login(request):
             usuario = Usuario.objects.filter(matricula=matricula).first()
 
 
-
             if usuario is not None:
                 print(f"Usuário encontrado no BD: {usuario}")
 
@@ -76,16 +75,12 @@ def fazer_login(request):
                 if senha_valida:
                     print("Senha Valida por checkpassword!")
 
-                    refresh = RefreshToken.for_user(usuario)
-                    token =  str(refresh.access_token)
                     uid = urlsafe_base64_encode(force_bytes(usuario.pk))
 
-                    print(f"TokenAcesso: {token}")
                     return JsonResponse({
                         'mensagem': 'Login realizado com sucesso',
                         'usuario_id': usuario.id,
                         'usuario_nome': usuario.first_name,
-                        'tokenAcesso': token,
                         'uid': uid
                     }, status=200)
 

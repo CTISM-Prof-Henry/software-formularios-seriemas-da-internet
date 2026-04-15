@@ -23,7 +23,6 @@ class CustomUserAdmin(UserAdmin):
         ('Datas Importantes', {'fields': ('last_login', 'date_joined')}),
     )
 
-    # Garantimos que a matrícula e as senhas apareçam na tela de Cadastro (+ Add)
     add_fieldsets = (
         (None, {
             'classes': ('wide',),

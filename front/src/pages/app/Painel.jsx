@@ -1,28 +1,11 @@
-import {useEffect, useState} from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import '../style/Home.css'
+import { Link, NavLink,  } from 'react-router-dom'
+import '../../style/Painel.css'
+import photoUser from '../../assets/do-utilizador.png'
+import {useAuth} from "../../hooks/useAuth.js";
 
-function Home() {
+function Painel() {
 
-    const uid = localStorage.getItem('uid')
-    const [usuario, setUsuario] = useState('')
-
-    useEffect(() => {
-
-        const buscaUsuario = async () => {
-
-            try {
-                const resposta = await fetch(`http://127.0.0.1:8000/api/usuario/${uid}`)
-                const dados = await resposta.json()
-
-                setUsuario(dados)
-            } catch (erro) {
-                console.error("Erro ao busca usuario:", erro)
-            }
-        }
-
-        buscaUsuario()
-    }, [])
+    const { usuario, fazerLogout } = useAuth()
 
 
     return (
@@ -37,7 +20,10 @@ function Home() {
 
                 <div className="user">
                     <p>{usuario.first_name + " " + usuario.last_name}</p>
+                    <img src={photoUser} alt="profile image" />
+                    <button onClick={fazerLogout}>Sair</button>
                 </div>
+
             </header>
 
 
@@ -88,4 +74,4 @@ function Home() {
 }
 
 
-export default Home
+export default Painel
