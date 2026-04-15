@@ -34,6 +34,29 @@ header {
     }
 }
 
+.user {
+    color: var(--text-light);
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+
+    & button {
+        background-color: var(--light-blue);
+        color: var(--text-light);
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+    }
+
+    & img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+
+
 aside {
     background-color: var(--dark-blue);
     height: 75%;
@@ -71,7 +94,7 @@ aside {
     border-left: 5px solid #007BFF;
 }
 
-
-.menu-hover {
+.menu-ativo {
     background-color: var(--text-light);
+    border-left: 5px solid #007BFF;
 }

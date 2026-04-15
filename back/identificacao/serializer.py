@@ -1,10 +1,9 @@
-from django.core.serializers import serialize
+from rest_framework import serializers
+from .models import Identificacao
 
-from .models import identificacao
 
-
-class Identificacao(serializers.ModelSerializer):
+class IdentificacaoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = identificacao
+        model = Identificacao
 
         fields = '__all__'

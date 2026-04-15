@@ -1,3 +1,13 @@
 from django.contrib import admin
 
-# Register your models here.
+from desafio.models import Desafio
+
+
+class DesafioAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Desafio
+
+        fields = '__all__'
+
+
+admin.site.register(Desafio, DesafioAdmin)

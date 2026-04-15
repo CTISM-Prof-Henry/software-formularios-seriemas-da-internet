@@ -38,7 +38,7 @@ function Login() {
                 localStorage.setItem('tokenAcesso', dados.tokenAcesso)
                 localStorage.setItem('uid', dados.uid)
 
-                navigate(`/app`)
+                navigate(`/painel`)
             } else {
                 setMensagemErro("Matricula ou senha incorretos!");
             }
