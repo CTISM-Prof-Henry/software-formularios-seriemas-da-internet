@@ -4,6 +4,7 @@ from avaliacao.models import Avaliacao
 from desafio.models import Desafio
 from identificacao.models import Identificacao
 from tratamento.models import Tratamento
+from usuario.models import Usuario
 
 
 class Risco(models.Model):
@@ -24,3 +25,13 @@ class Risco(models.Model):
         return f"{self.descricao} - {self.identificacao} - {self.avaliacao} - {self.tratamento}"
 
 
+class Usuario_risco(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    risco = models.ForeignKey(Risco, on_delete=models.CASCADE)
+
+    papel = models.CharField(max_length=50)
+    data_atribuicao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'usuario_risco'
+        unique_together = ('usuario', 'risco')
