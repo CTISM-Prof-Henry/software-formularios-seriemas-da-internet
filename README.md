@@ -12,7 +12,7 @@
 `docker-compose up --build -d`
 
 ## Após os container serem criados e iniciados use o comando a seguir para criar as tabelas do Banco de Dados
-`docker-compose backend python3.11 manage.py migrate`
+`docker-compose exec backend python3.11 manage.py migrate`
 
 ### Se necessario rode
 `docker-compose restart`
