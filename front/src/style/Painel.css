@@ -47,6 +47,7 @@ header {
         border: none;
         font-size: 1.1rem;
         cursor: pointer;
+        font-synthesis-style: auto;
     }
 
     & img {
@@ -75,6 +76,7 @@ aside {
     flex-direction: column;
     padding: 5vh 0vw;
 
+
     & p {
         padding: 0px 1.5vw;
         font-size: 0.9rem;
@@ -85,7 +87,7 @@ aside {
         padding: 10px 15px;
         color: #FFFFFF;
         text-decoration: none;
-
+        transition: 0.3s;
     }
 }
 

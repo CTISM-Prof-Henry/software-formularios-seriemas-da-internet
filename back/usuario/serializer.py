@@ -14,7 +14,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
                   'matricula',
                   'setor',
                   'perfil_acesso',
-                  'date_joined'
+                  'date_joined',
+                  'last_login',
         ]
 
         extra_kwargs = {
@@ -29,7 +30,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             matricula=validated_data.get('matricula'),
             setor=validated_data.get('setor'),
-            perfil_acesso=self.initial_data.get('perfil'),
+            perfil_acesso=validated_data.get('perfil', 'padrao'),
+            is_staff=True,
         )
 
         user.set_password(validated_data.get('password'))

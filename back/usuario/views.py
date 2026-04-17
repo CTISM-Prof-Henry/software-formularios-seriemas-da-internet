@@ -16,6 +16,7 @@ from django.utils.encoding import force_str
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 @api_view(['GET'])
 def listar_usuarios(request):
@@ -76,6 +77,8 @@ def fazer_login(request):
                     print("Senha Valida por checkpassword!")
 
                     uid = urlsafe_base64_encode(force_bytes(usuario.pk))
+                    usuario.last_login = timezone.now()
+
 
                     return JsonResponse({
                         'mensagem': 'Login realizado com sucesso',
@@ -116,6 +119,7 @@ def cadastrar_usuario(request):
             if serializer.is_valid():
                 serializer.save()
                 print(f"Dados: {serializer.data}")
+
 
                 return JsonResponse({"messagem": "Usuario cadastrado com sucesso!"}, status=201)
 
