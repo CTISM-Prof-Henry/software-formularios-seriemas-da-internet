@@ -25,40 +25,30 @@
 
 ``` mermaid
 useCaseDiagram
+    actor "Usuário" as U
+    actor "Admin" as A
 
-class Usuario {
-    +criarRisco()
-    +alterarRisco()
-    +apagarRisco()
-    +consultarRiscos()
-    +gerarRelatorio()
-}
+    package "Sistema de Riscos" {
+        usecase "Criar Risco" as UC1
+        usecase "Alterar Risco" as UC2
+        usecase "Apagar Risco" as UC3
+        usecase "Consultar Riscos" as UC4
+        usecase "Gerar Relatório" as UC5
+        usecase "Gerenciar Usuários" as UC6
+        usecase "Acessar Banco de Dados" as UC7
+    }
 
-class Admin {
-    +gerenciarUsuarios()
-    +acessarBancoDeDados()
-}
+    U --> UC1
+    U --> UC2
+    U --> UC3
+    U --> UC4
+    U --> UC5
 
-class Risco {
-    +criar()
-    +alterar()
-    +apagar()
-    +consultar()
-}
-
-class Relatorio {
-    +gerar()
-}
-
-class BancoDeDados {
-    +acessar()
-}
-
-Usuario --> Risco
-Usuario --> Relatorio
-
-Admin --> BancoDeDados
-Admin --> Usuario
+    A --> UC6
+    A --> UC7
+    
+    %% Herança: Admin também pode fazer o que o Usuário faz
+    A --|> U
 ```
 
 ## Diagrama de Classes
