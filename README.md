@@ -128,37 +128,39 @@ Risco "0" -- "1" Tratamento
 Planejamento -- Desafio
 Relatorio -- Planejamento
 
-flowchart LR
+class Usuario {
+    +criarRisco()
+    +alterarRisco()
+    +apagarRisco()
+    +consultarRiscos()
+    +gerarRelatorio()
+}
 
-subgraph Caso de Uso
+class Admin {
+    +gerenciarUsuarios()
+    +acessarBancoDeDados()
+}
 
-    UC1([Criar Risco])
-    UC2([Alterar Risco])
-    UC3([Apagar Risco])
-    UC4([Consultar Riscos])
-    UC7([Gerar Relatório])
+class Risco {
+    +criar()
+    +alterar()
+    +apagar()
+    +consultar()
+}
 
-    UC5([Gerenciar Usuários])
-    UC6([Acessar Banco de Dados])
+class Relatorio {
+    +gerar()
+}
 
-    UC1 --> UC2
-    UC1 --> UC3
-    UC1 --> UC4
-    UC4 --> UC7
+class BancoDeDados {
+    +acessar()
+}
 
-end
+Usuario --> Risco
+Usuario --> Relatorio
 
-Usuario([Usuário])
-Admin([Administrador])
-
-Usuario --> UC1
-Usuario --> UC2
-Usuario --> UC3
-Usuario --> UC4
-Usuario --> UC7
-
-Admin --> UC5
-Admin --> UC6
+Admin --> BancoDeDados
+Admin --> Usuario
 ```
 
 ## Diagrama do Banco de Dados
