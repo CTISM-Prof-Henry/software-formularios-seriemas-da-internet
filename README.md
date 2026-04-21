@@ -21,117 +21,150 @@
 
 ## Projeto no Figma: https://www.figma.com/design/AGh7cnJG0QBh9PpLi7pjqv/Gestor-de-Risco?node-id=0-1&t=bYHcgpCLF86ryook-1
 
+## Diagrama caso de uso
+
+``` merrmaid
+class Usuario {
+    +criarRisco()
+    +alterarRisco()
+    +apagarRisco()
+    +consultarRiscos()
+    +gerarRelatorio()
+}
+
+class Admin {
+    +gerenciarUsuarios()
+    +acessarBancoDeDados()
+}
+
+class Risco {
+    +criar()
+    +alterar()
+    +apagar()
+    +consultar()
+}
+
+class Relatorio {
+    +gerar()
+}
+
+class BancoDeDados {
+    +acessar()
+}
+
+Usuario --> Risco
+Usuario --> Relatorio
+
+Admin --> BancoDeDados
+Admin --> Usuario
+```
+
 ## Diagrama de Classes
 ```mermaid
----
-config:
-  layout: dagre
-  look: neo
-  theme: default
----
 classDiagram
 direction TB
-    class Usuario {
-	    -Serial id
-	    +String nome
-	    +String email
-	    -String senha
-	    +String setor
-	    +String perfil
-	    +Boolean login()
-	    +void logout()
-	    +void recuperarSenha()
-	    +Risco registrarRisco()
-    }
 
-    class Planejamento {
-	    -serial id_planejamento
-	    +int ano
-	    +String descricao
-	    +Date data_inicio
-	    +Date data_final
-	    +void criarPlanejamento()
-	    +void encerrar()
-	    +List listarDesafios()
-    }
+class Usuario {
+    -Serial id
+    +String nome
+    +String email
+    -String senha
+    +String setor
+    +String perfil
+    +Boolean login()
+    +void logout()
+    +void recuperarSenha()
+    +Risco registrarRisco()
+}
 
-    class Risco {
-	    -serial id_risco
-	    +String descricao
-	    +CategoriaRisco categoria
-	    +String responsavel
-	    +Date data_criacao
-	    +StatusRisco Status
-	    +int calcularNivel()
-	    +void avancarEtapa()
-	    +Etapa getEtapaAtual()
-    }
+class Planejamento {
+    -serial id_planejamento
+    +int ano
+    +String descricao
+    +Date data_inicio
+    +Date data_final
+    +void criarPlanejamento()
+    +void encerrar()
+    +List listarDesafios()
+}
 
-    class Desafio {
-	    -serial id_desafio
-	    +int numero
-	    +String nome
-	    +String descricao
-	    +float calcularProgresso()
-	    +List listarRiscos()
-    }
+class Risco {
+    -serial id_risco
+    +String descricao
+    +CategoriaRisco categoria
+    +String responsavel
+    +Date data_criacao
+    +StatusRisco Status
+    +int calcularNivel()
+    +void avancarEtapa()
+    +Etapa getEtapaAtual()
+}
 
-    class Relatorio {
-	    -serial id_relatorio
-	    +String tipo
-	    +Date data_geracao
-	    +void gerar()
-	    +File exportar()
-    }
+class Desafio {
+    -serial id_desafio
+    +int numero
+    +String nome
+    +String descricao
+    +float calcularProgresso()
+    +List listarRiscos()
+}
 
-    class Identificacao {
-	    -serial id_identificacao
-	    +String descricao_risco
-	    +String causas
-	    +String irregularidades
-	    +Date data_registro
-	    +void registrar()
-	    +Boolean validar()
-    }
+class Relatorio {
+    -serial id_relatorio
+    +String tipo
+    +Date data_geracao
+    +void gerar()
+    +File exportar()
+}
 
-    class Avaliacao {
-	    -serial id_avaliacao
-	    +int probabilidade
-	    +int impacto
-	    -int nivel_risco
-	    +String contexto
-	    +NivelRisco classificacao
-	    +int calcularNivel()
-	    -NivelRisco classificar()
-    }
+class Identificacao {
+    -serial id_identificacao
+    +String descricao_risco
+    +String causas
+    +String irregularidades
+    +Date data_registro
+    +void registrar()
+    +Boolean validar()
+}
 
-    class Tratamento {
-	    -serial id_tratamento
-	    +RespostaRisco resposta
-	    +String acao
-	    +String responsavel
-	    +Date prazo
-	    +int prob_residual
-	    +int impacto_residual
-	    +String indicadores
-	    +void registrar()
-	    +void atualizar()
-    }
+class Avaliacao {
+    -serial id_avaliacao
+    +int probabilidade
+    +int impacto
+    -int nivel_risco
+    +String contexto
+    +NivelRisco classificacao
+    +int calcularNivel()
+    -NivelRisco classificar()
+}
 
-    class MatrizRisco {
-        +Grid gerarMatriz()
-        +void plotarRiscos()
-        +List filtrarPorNivel()
-    }
+class Tratamento {
+    -serial id_tratamento
+    +RespostaRisco resposta
+    +String acao
+    +String responsavel
+    +Date prazo
+    +int prob_residual
+    +int impacto_residual
+    +String indicadores
+    +void registrar()
+    +void atualizar()
+}
 
-    Usuario -- Planejamento
-    Desafio -- Risco
-    Risco -- Identificacao
-    Risco "0" -- "1" Avaliacao
-    Risco "0" -- "1" Tratamento
-    Usuario -- Risco
-    Planejamento -- Desafio
-    Relatorio -- Planejamento
+class MatrizRisco {
+    +Grid gerarMatriz()
+    +void plotarRiscos()
+    +List filtrarPorNivel()
+}
+
+Usuario -- Planejamento
+Usuario -- Risco
+Desafio -- Risco
+Risco -- Identificacao
+Risco "0" -- "1" Avaliacao
+Risco "0" -- "1" Tratamento
+Planejamento -- Desafio
+Relatorio -- Planejamento
 ```
 
 ## Diagrama do Banco de Dados
