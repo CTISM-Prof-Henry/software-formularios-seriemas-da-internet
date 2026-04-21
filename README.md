@@ -47,7 +47,6 @@ graph LR
     A --- UC6
     A --- UC7
     
-    %% Herança simplificada para evitar erro de sintaxe
     A -- é um --> U
 ```
 
