@@ -127,7 +127,10 @@ Risco "0" -- "1" Avaliacao
 Risco "0" -- "1" Tratamento
 Planejamento -- Desafio
 Relatorio -- Planejamento
+```
 
+
+``` merrmaid
 class Usuario {
     +criarRisco()
     +alterarRisco()
