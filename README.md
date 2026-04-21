@@ -24,30 +24,30 @@
 ## Diagrama caso de uso
 
 ``` mermaid
-useCaseDiagram
-    actor "Usuário" as U
-    actor "Admin" as A
+graph LR
+    subgraph Sistema ["Sistema de Riscos"]
+        UC1((Criar Risco))
+        UC2((Alterar Risco))
+        UC3((Apagar Risco))
+        UC4((Consultar Riscos))
+        UC5((Gerar Relatório))
+        UC6((Gerenciar Usuários))
+        UC7((Acessar Banco de Dados))
+    end
 
-    package "Sistema de Riscos" {
-        usecase "Criar Risco" as UC1
-        usecase "Alterar Risco" as UC2
-        usecase "Apagar Risco" as UC3
-        usecase "Consultar Riscos" as UC4
-        usecase "Gerar Relatório" as UC5
-        usecase "Gerenciar Usuários" as UC6
-        usecase "Acessar Banco de Dados" as UC7
-    }
+    U[Usuário]
+    A[Admin]
 
-    U --> UC1
-    U --> UC2
-    U --> UC3
-    U --> UC4
-    U --> UC5
+    U --- UC1
+    U --- UC2
+    U --- UC3
+    U --- UC4
+    U --- UC5
 
-    A --> UC6
-    A --> UC7
+    A --- UC6
+    A --- UC7
     
-    %% Herança: Admin também pode fazer o que o Usuário faz
+    %% Herança: Admin é um Usuário
     A --|> U
 ```
 
