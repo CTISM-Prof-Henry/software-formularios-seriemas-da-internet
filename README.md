@@ -47,8 +47,8 @@ graph LR
     A --- UC6
     A --- UC7
     
-    %% Herança: Admin é um Usuário
-    A --|> U
+    %% Herança simplificada para evitar erro de sintaxe
+    A -- é um --> U
 ```
 
 ## Diagrama de Classes
