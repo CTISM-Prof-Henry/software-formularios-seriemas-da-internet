@@ -23,7 +23,7 @@
 
 ## Diagrama caso de uso
 
-``` merrmaid
+``` mermaid
 class Usuario {
     +criarRisco()
     +alterarRisco()
