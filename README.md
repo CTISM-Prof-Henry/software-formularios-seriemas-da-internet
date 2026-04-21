@@ -21,6 +21,44 @@
 
 ## Projeto no Figma: https://www.figma.com/design/AGh7cnJG0QBh9PpLi7pjqv/Gestor-de-Risco?node-id=0-1&t=bYHcgpCLF86ryook-1
 
+## Diagrama caso de uso
+
+``` merrmaid
+class Usuario {
+    +criarRisco()
+    +alterarRisco()
+    +apagarRisco()
+    +consultarRiscos()
+    +gerarRelatorio()
+}
+
+class Admin {
+    +gerenciarUsuarios()
+    +acessarBancoDeDados()
+}
+
+class Risco {
+    +criar()
+    +alterar()
+    +apagar()
+    +consultar()
+}
+
+class Relatorio {
+    +gerar()
+}
+
+class BancoDeDados {
+    +acessar()
+}
+
+Usuario --> Risco
+Usuario --> Relatorio
+
+Admin --> BancoDeDados
+Admin --> Usuario
+```
+
 ## Diagrama de Classes
 ```mermaid
 classDiagram
@@ -127,43 +165,6 @@ Risco "0" -- "1" Avaliacao
 Risco "0" -- "1" Tratamento
 Planejamento -- Desafio
 Relatorio -- Planejamento
-```
-
-
-``` merrmaid
-class Usuario {
-    +criarRisco()
-    +alterarRisco()
-    +apagarRisco()
-    +consultarRiscos()
-    +gerarRelatorio()
-}
-
-class Admin {
-    +gerenciarUsuarios()
-    +acessarBancoDeDados()
-}
-
-class Risco {
-    +criar()
-    +alterar()
-    +apagar()
-    +consultar()
-}
-
-class Relatorio {
-    +gerar()
-}
-
-class BancoDeDados {
-    +acessar()
-}
-
-Usuario --> Risco
-Usuario --> Relatorio
-
-Admin --> BancoDeDados
-Admin --> Usuario
 ```
 
 ## Diagrama do Banco de Dados
