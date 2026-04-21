@@ -24,6 +24,8 @@
 ## Diagrama caso de uso
 
 ``` mermaid
+useCaseDiagram
+
 class Usuario {
     +criarRisco()
     +alterarRisco()
