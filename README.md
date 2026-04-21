@@ -132,6 +132,36 @@ direction TB
     Usuario -- Risco
     Planejamento -- Desafio
     Relatorio -- Planejamento
+
+	flowchart LR
+    subgraph Caso de Uso
+        UC1([Criar Risco])
+        UC2([Alterar Risco])
+        UC3([Apagar Risco])
+        UC4([Consultar Riscos])
+        UC7([Gerar Relatório])
+
+        UC5([Gerenciar Usuários])
+        UC6([Acessar Banco de Dados])
+
+        UC1 --> UC2
+        UC1 --> UC3
+        UC1 --> UC4
+        UC4 -->|<<include>>| UC7
+
+    end
+
+    Usuario([Usuário])
+    Admin([Administrador])
+
+    Usuario --> UC1
+    Usuario --> UC2
+    Usuario --> UC3
+    Usuario --> UC4
+    Usuario --> UC7
+
+    Admin --> UC5
+    Admin --> UC6
 ```
 
 ## Diagrama do Banco de Dados
