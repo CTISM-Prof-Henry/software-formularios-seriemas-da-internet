@@ -23,145 +23,142 @@
 
 ## Diagrama de Classes
 ```mermaid
----
-config:
-  layout: dagre
-  look: neo
-  theme: default
----
 classDiagram
 direction TB
-    class Usuario {
-	    -Serial id
-	    +String nome
-	    +String email
-	    -String senha
-	    +String setor
-	    +String perfil
-	    +Boolean login()
-	    +void logout()
-	    +void recuperarSenha()
-	    +Risco registrarRisco()
-    }
 
-    class Planejamento {
-	    -serial id_planejamento
-	    +int ano
-	    +String descricao
-	    +Date data_inicio
-	    +Date data_final
-	    +void criarPlanejamento()
-	    +void encerrar()
-	    +List listarDesafios()
-    }
+class Usuario {
+    -Serial id
+    +String nome
+    +String email
+    -String senha
+    +String setor
+    +String perfil
+    +Boolean login()
+    +void logout()
+    +void recuperarSenha()
+    +Risco registrarRisco()
+}
 
-    class Risco {
-	    -serial id_risco
-	    +String descricao
-	    +CategoriaRisco categoria
-	    +String responsavel
-	    +Date data_criacao
-	    +StatusRisco Status
-	    +int calcularNivel()
-	    +void avancarEtapa()
-	    +Etapa getEtapaAtual()
-    }
+class Planejamento {
+    -serial id_planejamento
+    +int ano
+    +String descricao
+    +Date data_inicio
+    +Date data_final
+    +void criarPlanejamento()
+    +void encerrar()
+    +List listarDesafios()
+}
 
-    class Desafio {
-	    -serial id_desafio
-	    +int numero
-	    +String nome
-	    +String descricao
-	    +float calcularProgresso()
-	    +List listarRiscos()
-    }
+class Risco {
+    -serial id_risco
+    +String descricao
+    +CategoriaRisco categoria
+    +String responsavel
+    +Date data_criacao
+    +StatusRisco Status
+    +int calcularNivel()
+    +void avancarEtapa()
+    +Etapa getEtapaAtual()
+}
 
-    class Relatorio {
-	    -serial id_relatorio
-	    +String tipo
-	    +Date data_geracao
-	    +void gerar()
-	    +File exportar()
-    }
+class Desafio {
+    -serial id_desafio
+    +int numero
+    +String nome
+    +String descricao
+    +float calcularProgresso()
+    +List listarRiscos()
+}
 
-    class Identificacao {
-	    -serial id_identificacao
-	    +String descricao_risco
-	    +String causas
-	    +String irregularidades
-	    +Date data_registro
-	    +void registrar()
-	    +Boolean validar()
-    }
+class Relatorio {
+    -serial id_relatorio
+    +String tipo
+    +Date data_geracao
+    +void gerar()
+    +File exportar()
+}
 
-    class Avaliacao {
-	    -serial id_avaliacao
-	    +int probabilidade
-	    +int impacto
-	    -int nivel_risco
-	    +String contexto
-	    +NivelRisco classificacao
-	    +int calcularNivel()
-	    -NivelRisco classificar()
-    }
+class Identificacao {
+    -serial id_identificacao
+    +String descricao_risco
+    +String causas
+    +String irregularidades
+    +Date data_registro
+    +void registrar()
+    +Boolean validar()
+}
 
-    class Tratamento {
-	    -serial id_tratamento
-	    +RespostaRisco resposta
-	    +String acao
-	    +String responsavel
-	    +Date prazo
-	    +int prob_residual
-	    +int impacto_residual
-	    +String indicadores
-	    +void registrar()
-	    +void atualizar()
-    }
+class Avaliacao {
+    -serial id_avaliacao
+    +int probabilidade
+    +int impacto
+    -int nivel_risco
+    +String contexto
+    +NivelRisco classificacao
+    +int calcularNivel()
+    -NivelRisco classificar()
+}
 
-    class MatrizRisco {
-        +Grid gerarMatriz()
-        +void plotarRiscos()
-        +List filtrarPorNivel()
-    }
+class Tratamento {
+    -serial id_tratamento
+    +RespostaRisco resposta
+    +String acao
+    +String responsavel
+    +Date prazo
+    +int prob_residual
+    +int impacto_residual
+    +String indicadores
+    +void registrar()
+    +void atualizar()
+}
 
-    Usuario -- Planejamento
-    Desafio -- Risco
-    Risco -- Identificacao
-    Risco "0" -- "1" Avaliacao
-    Risco "0" -- "1" Tratamento
-    Usuario -- Risco
-    Planejamento -- Desafio
-    Relatorio -- Planejamento
+class MatrizRisco {
+    +Grid gerarMatriz()
+    +void plotarRiscos()
+    +List filtrarPorNivel()
+}
 
-	flowchart LR
-    subgraph Caso de Uso
-        UC1([Criar Risco])
-        UC2([Alterar Risco])
-        UC3([Apagar Risco])
-        UC4([Consultar Riscos])
-        UC7([Gerar Relatório])
+Usuario -- Planejamento
+Usuario -- Risco
+Desafio -- Risco
+Risco -- Identificacao
+Risco "0" -- "1" Avaliacao
+Risco "0" -- "1" Tratamento
+Planejamento -- Desafio
+Relatorio -- Planejamento
 
-        UC5([Gerenciar Usuários])
-        UC6([Acessar Banco de Dados])
+flowchart LR
 
-        UC1 --> UC2
-        UC1 --> UC3
-        UC1 --> UC4
-        UC4 -->|<<include>>| UC7
+subgraph Caso de Uso
 
-    end
+    UC1([Criar Risco])
+    UC2([Alterar Risco])
+    UC3([Apagar Risco])
+    UC4([Consultar Riscos])
+    UC7([Gerar Relatório])
 
-    Usuario([Usuário])
-    Admin([Administrador])
+    UC5([Gerenciar Usuários])
+    UC6([Acessar Banco de Dados])
 
-    Usuario --> UC1
-    Usuario --> UC2
-    Usuario --> UC3
-    Usuario --> UC4
-    Usuario --> UC7
+    UC1 --> UC2
+    UC1 --> UC3
+    UC1 --> UC4
+    UC4 --> UC7
 
-    Admin --> UC5
-    Admin --> UC6
+end
+
+Usuario([Usuário])
+Admin([Administrador])
+
+Usuario --> UC1
+Usuario --> UC2
+Usuario --> UC3
+Usuario --> UC4
+Usuario --> UC7
+
+Admin --> UC5
+Admin --> UC6
 ```
 
 ## Diagrama do Banco de Dados
