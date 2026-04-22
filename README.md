@@ -31,8 +31,7 @@ graph LR
         UC3((Apagar Risco))
         UC4((Consultar Riscos))
         UC5((Gerar Relatório))
-        UC6((Gerenciar Usuários))
-        UC7((Acessar Banco de Dados))
+        UC6((Gerenciar Sistema))
     end
 
     U[Usuário]
@@ -45,7 +44,7 @@ graph LR
     U --- UC5
 
     A --- UC6
-    A --- UC7
+    
     
     A -- é um --> U
 ```
@@ -56,96 +55,98 @@ classDiagram
 direction TB
 
 class Usuario {
-    -Serial id
-    +String nome
-    +String email
-    -String senha
-    +String setor
-    +String perfil
-    +Boolean login()
-    +void logout()
-    +void recuperarSenha()
-    +Risco registrarRisco()
+    -id : Serial
+    +nome : String
+    +email : String
+    -senha : String
+    +setor : String
+    +perfil : String
+    +login(email: String, senha: String) Boolean
+    +logout() void
+    +recuperarSenha(email: String) void
+    +registrarRisco(descricao: String, categoria: CategoriaRisco) Risco
+    +criarPlanejamento() Planejamento
 }
 
 class Planejamento {
-    -serial id_planejamento
-    +int ano
-    +String descricao
-    +Date data_inicio
-    +Date data_final
-    +void criarPlanejamento()
-    +void encerrar()
-    +List listarDesafios()
+    -id_planejamento : Serial
+    +ano : int
+    +descricao : String
+    +data_inicio : Date
+    +data_final : Date
+    +criarPlanejamento(ano: int, descricao: String, data_inicio: Date, data_final: Date) void
+    +encerrar(data_final: Date) void
+    +listarDesafios() List
 }
 
 class Risco {
-    -serial id_risco
-    +String descricao
-    +CategoriaRisco categoria
-    +String responsavel
-    +Date data_criacao
-    +StatusRisco Status
-    +int calcularNivel()
-    +void avancarEtapa()
-    +Etapa getEtapaAtual()
+    -id_risco : Serial
+    -id_planejamento : Serial
+    +descricao : String
+    +categoria : CategoriaRisco
+    +responsavel : String
+    +data_criacao : Date
+    +status : StatusRisco
+    +calcularNivel(probabilidade: int, impacto: int) int
+    +avancarEtapa(novaEtapa: Etapa) void
+    +getEtapaAtual() Etapa
 }
 
 class Desafio {
-    -serial id_desafio
-    +int numero
-    +String nome
-    +String descricao
-    +float calcularProgresso()
-    +List listarRiscos()
+    -id_desafio : Serial
+    +numero : int
+    +nome : String
+    +descricao : String
+    +calcularProgresso(totalRiscos: int, riscosConcluidos: int) float
+    +listarRiscos() List
 }
 
 class Relatorio {
-    -serial id_relatorio
-    +String tipo
-    +Date data_geracao
-    +void gerar()
-    +File exportar()
+    -id_relatorio : Serial
+    +tipo : String
+    +data_geracao : Date
+    +gerar(tipo: String, planejamento: Planejamento) void
+    +exportar(formato: String) File
 }
 
 class Identificacao {
-    -serial id_identificacao
-    +String descricao_risco
-    +String causas
-    +String irregularidades
-    +Date data_registro
-    +void registrar()
-    +Boolean validar()
+    -id_identificacao : Serial
+    +descricao_risco : String
+    +causas : String
+    +irregularidades : String
+    +data_registro : Date
+    +registrar(descricao: String, causas: String, irregularidades: String) void
+    +validar() Boolean
 }
 
 class Avaliacao {
-    -serial id_avaliacao
-    +int probabilidade
-    +int impacto
-    -int nivel_risco
-    +String contexto
-    +NivelRisco classificacao
-    +int calcularNivel()
-    -NivelRisco classificar()
+    -id_avaliacao : Serial
+    +probabilidade : int
+    +impacto : int
+    -nivel_risco : int
+    +contexto : String
+    +classificacao : NivelRisco
+    +calcularNivel(probabilidade: int, impacto: int) int
+    -classificar(nivel: int) NivelRisco
 }
 
 class Tratamento {
-    -serial id_tratamento
-    +RespostaRisco resposta
-    +String acao
-    +String responsavel
-    +Date prazo
-    +int prob_residual
-    +int impacto_residual
-    +String indicadores
-    +void registrar()
-    +void atualizar()
+    -id_tratamento : Serial
+    +resposta : RespostaRisco
+    +acao : String
+    +responsavel : String
+    +prazo : Date
+    +prob_residual : int
+    +impacto_residual : int
+    +indicadores : String
+    +registrar(resposta: RespostaRisco, acao: String, prazo: Date) void
+    +atualizar(acao: String, prazo: Date, indicadores: String) void
 }
 
 class MatrizRisco {
-    +Grid gerarMatriz()
-    +void plotarRiscos()
-    +List filtrarPorNivel()
+    +gerarMatriz(riscos: List) Grid
+    +plotarRiscos(riscos: List) void
+    +filtrarPorNivel(nivel: NivelRisco) List
 }
 
 Usuario -- Planejamento
@@ -156,6 +157,7 @@ Risco "0" -- "1" Avaliacao
 Risco "0" -- "1" Tratamento
 Planejamento -- Desafio
 Relatorio -- Planejamento
+Planejamento -- MatrizRisco
 ```
 
 ## Diagrama do Banco de Dados
