@@ -28,6 +28,7 @@ services:
       - ./back:/app
     environment:
       - PYTHONUNBUFFERED=1
+      - DB_HOST=db
     depends_on:
       - db
     networks:
