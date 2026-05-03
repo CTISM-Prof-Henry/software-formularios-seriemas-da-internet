@@ -23,7 +23,7 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: postgre
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: 1234
           POSTGRES_DB: gestor_db
         ports:
