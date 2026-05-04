@@ -30,7 +30,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             matricula=validated_data.get('matricula'),
             setor=validated_data.get('setor'),
-            perfil_acesso=validated_data.get('perfil', 'padrao'),
+            perfil_acesso=validated_data.get('perfil_acesso'),
             is_staff=True,
         )
 
