@@ -4,7 +4,6 @@ env/
 __pycache__/
 *.pyc
 
-db.sqlite3
 
 
 node_modules/
@@ -14,3 +13,4 @@ dist/
 
 .DS_Store
 Thumbs.db
+k8s/secrets.yaml

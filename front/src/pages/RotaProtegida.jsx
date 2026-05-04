@@ -1,14 +1,15 @@
-import { Navigate }  from  'react-router-dom'
+import { Navigate, Outlet }  from  'react-router-dom'
 
-function RotaProtegida({ children })  {
-    const token = localStorage.getItem('tokenAcesso')
+function RotaProtegida()  {
+    const uid = localStorage.getItem('uid')
 
-    if (!token) {
+    if (!uid) {
         return <Navigate to="/" />
     }
 
-    console.log(token)
-    return children;
+    console.log(uid)
+
+    return <Outlet />;
 }
 
 export default RotaProtegida

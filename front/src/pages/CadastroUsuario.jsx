@@ -13,7 +13,7 @@ function CadastroUsuario() {
         password: "",
         matricula: "",
         setor: "",
-        perfil: ""
+        perfil_acesso: ""
       });
 
       function handleChange(e) {
@@ -41,6 +41,7 @@ function CadastroUsuario() {
                     body: JSON.stringify(dadosParaEnviar)
                   });
 
+                  console.log("Dados enviados:", dadosParaEnviar)
 
                   if (response.ok) {
 
@@ -70,7 +71,7 @@ function CadastroUsuario() {
 
             <div className="back">
 
-                <section>
+                <section className="section-cadastro">
 
                     <div className="title">
                         <h1>Criar conta</h1>
@@ -115,7 +116,7 @@ function CadastroUsuario() {
 
                             <div className="input-group">
                                 <label>Perfil de acesso</label>
-                                <select type="text" name="perfil" placeholder="*******" className="select" onChange={handleChange} value={form.perfil} required>
+                                <select type="text" name="perfil_acesso" placeholder="*******" className="select" onChange={handleChange} value={form.perfil} required>
 
                                     <option value="" disabled>Selecione um perfil</option>
                                     <option value="Gestor de Risco">Gestor de Risco</option>

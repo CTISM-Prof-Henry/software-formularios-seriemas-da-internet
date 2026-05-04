@@ -7,15 +7,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
         # fields = '__all__'
 
         fields = ['id',
-                  'username',
+                  'first_name',
+                  'last_name',
                   'email',
                   'password',
                   'matricula',
                   'setor',
-                  'perfil_acesso', 
-                  'first_name',
-                  'last_name',
-                  'date_joined'
+                  'perfil_acesso',
+                  'date_joined',
+                  'last_login',
         ]
 
         extra_kwargs = {
@@ -30,7 +30,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             matricula=validated_data.get('matricula'),
             setor=validated_data.get('setor'),
-            perfil_acesso=self.initial_data.get('perfil'),
+            perfil_acesso=validated_data.get('perfil_acesso'),
+            is_staff=True,
         )
 
         user.set_password(validated_data.get('password'))

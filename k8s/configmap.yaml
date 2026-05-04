@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: gestor
+data:
+  POSTGRES_DB: "gestor_db"
+  PYTHONUNBUFFERED: "1"
+  DJANGO_SETTINGS_MODULE: "config.settings"
+  ALLOWED_HOSTS: "*"
