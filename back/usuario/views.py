@@ -166,3 +166,28 @@ def reset_senha(request):
     except Exception as e:
 
         return JsonResponse({"erro": "Erro de servidor"}, status=500)
+ 
+
+@csrf_exempt
+@api_view(['POST'])
+def confirmar_reset_senha(request):
+
+    uid = request.data.get('uid')
+    token = request.data.get('token')
+    nova_senha = request.data.get('nova_senha')
+
+    try:
+        userId = force_str(urlsafe_base64_decode(uid))
+        user = Usuario.objects.get(pk=userId)
+
+        if user and default_token_generator.check_token(user, token):
+
+            user.set_password(nova_senha)
+            user.save()
+
+            return JsonResponse({"message": "Senha redefinida com sucesso!"}, status=200)
+
+        return JsonResponse({"erro": "Link de redefinicao invalido"}, status=400)
+
+    except Exception:
+        return JsonResponse({"erro": "Erro de servidor"}, status=500)
