@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 function RecuperarSenha() {
 
     const[email, setEmail] = useState('')
     const[erro, setErro] = useState('')
-    const navigate = useNavigate()
+    const[sucesso, setSucesso] = useState(false)
 
 
     const recuperar = async (evento) => {
@@ -26,14 +26,9 @@ function RecuperarSenha() {
 
             if (resposta.ok) {
 
-                const dados = await resposta.json();
-                console.log("Redefinicao funcionou!");
-                console.log(dados)
-
                 setErro('')
+                setSucesso(true)
 
-                // localStorage.setItem(dados.uid, dados.token)
-                navigate(`/redefinir-senha/${dados.uid}/${dados.token}`)
             } else {
 
                 setErro("Não existe um usuario com esse email!");
@@ -55,10 +50,13 @@ function RecuperarSenha() {
 
                     <div className="title">
                         <h1>Recuperar senha</h1>
-                        <p>Informe seu e-mail para receber o link de redefinição</p>
+                        {!sucesso && <p>Informe seu e-mail para receber o link de redefinição</p>}
                     </div>
 
-                    <form onSubmit={recuperar} className="form">
+                    {sucesso ? (
+                        <p>Se o email existir, você receberá um link em breve.</p>
+                    ) : (
+                        <form onSubmit={recuperar} className="form">
 
                             <div className="input-group">
                                 <label>E-mail institucional</label>
@@ -71,7 +69,8 @@ function RecuperarSenha() {
                             <div className="post-btn">
                                 <button type="submit">Enviar link</button>
                             </div>
-                    </form>
+                        </form>
+                    )}
 
 
 
