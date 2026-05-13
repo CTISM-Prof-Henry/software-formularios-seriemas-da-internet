@@ -53,7 +53,7 @@ class UsuarioAPITests(APITestCase):
 
         response = self.client.get(f'/api/usuario/{uid_falso}')
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data['error'], "Usuario nao existe!")
 
 
