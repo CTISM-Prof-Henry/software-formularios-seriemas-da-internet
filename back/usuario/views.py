@@ -46,7 +46,7 @@ def get_usuario(request, uid):
 
     else:
 
-        return Response({"error": "Usuario nao existe!"})
+        return Response({"error": "Usuario nao existe!"}, status=404)
 
 
 @csrf_exempt
