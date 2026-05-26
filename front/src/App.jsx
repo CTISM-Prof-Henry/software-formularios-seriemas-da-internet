@@ -6,6 +6,7 @@ import CadastroUsuario from "./pages/CadastroUsuario.jsx";
 import RecuperarSenha from "./pages/RecuperarSenha.jsx";
 import RedefinirSenha from "./pages/RedefinirSenha.jsx";
 import Desafios from "./pages/app/Desafios.jsx";
+import Layout from "./components/Layout.jsx";
 
 
 function App() {
@@ -15,15 +16,18 @@ function App() {
       <Routes>
 
         <Route path="/" element={<Login />} />
+        <Route path="/cadastro" element={<CadastroUsuario />} />
+        <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+        <Route path="/redefinir-senha/:uid/:token" element={<RedefinirSenha />} />
 
-          <Route path="/cadastro" element={<CadastroUsuario />} />
-          <Route path="/recuperar-senha" element={<RecuperarSenha />} />
-          <Route path="/redefinir-senha/:uid/:token" element={<RedefinirSenha />} />
-
-          <Route element={<RotaProtegida />}>
-              <Route path="/painel" element={<Painel />} />
-              <Route path="/desafios" element={<Desafios />} />
-          </Route>
+        <Route element={<RotaProtegida />}>
+            <Route element={<Layout />}>
+                <Route path="/painel" element={<Painel />} />
+                <Route path="/desafios" element={<Desafios />} />
+                {/*<Route path="/registrar-risco" element={<Registrar />}/>*/}
+                {/*<Route path="/todos-riscos" element={<Riscos />}*/}
+            </Route >
+        </Route>
 
       </Routes>
     </BrowserRouter>

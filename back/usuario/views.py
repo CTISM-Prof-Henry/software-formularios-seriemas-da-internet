@@ -45,7 +45,6 @@ def get_usuario(request, uid):
         return Response(serializer.data)
 
     else:
-
         return Response({"error": "Usuario nao existe!"}, status=404)
 
 
@@ -63,7 +62,6 @@ def fazer_login(request):
 
             print(f"\n--- TENTATIVA DE LOGIN ---")
             print(f"Matrícula recebida: '{matricula}'")
-            print(f"Senha recebida: '{senha}'")
 
             usuario = Usuario.objects.filter(matricula=matricula).first()
 
@@ -191,3 +189,6 @@ def confirmar_reset_senha(request):
 
     except Exception:
         return JsonResponse({"erro": "Erro de servidor"}, status=500)
+
+
+print("Teste")

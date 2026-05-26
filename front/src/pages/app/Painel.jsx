@@ -1,6 +1,6 @@
 import { Link, NavLink,  } from 'react-router-dom'
 import '../../style/Painel.css'
-import photoUser from '../../assets/do-utilizador.png'
+import '../../style/Main.css'
 import {useAuth} from "../../hooks/useAuth.js";
 
 function Painel() {
@@ -10,67 +10,99 @@ function Painel() {
 
     return (
 
-        <main>
+        <div className="painel">
 
-            <header>
-                <div className="logo">
-                    <h1>Gestor de Risco</h1>
-                    <p>| Planejamento 2026</p>
+            <div className="title">
+                <h2>Painel de Controle</h2>
+                <p>Visão geral do planejamento de riscos - ano 2026</p>
+            </div>
+
+            <div className="riscos-estatisticas">
+
+                <div className="block">
+                    <h5>Total de riscos</h5>
+                    <p>24</p>
                 </div>
 
-                <div className="user">
-                    <p>{usuario.first_name + " " + usuario.last_name}</p>
-                    <img src={photoUser} alt="profile image" />
-                    <button onClick={fazerLogout}>Sair</button>
+                <div className="block">
+                    <h5>Risco críticos</h5>
+                    <p>6</p>
                 </div>
 
-            </header>
-
-
-            <aside>
-
-
-                <div className="menu">
-                    <p>NAVEGAÇÃO</p>
-
-                    <NavLink
-                        to="/painel"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Painel
-                    </NavLink>
-
-                    <NavLink
-                        to="/desafios"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Desafios estratégicos
-                    </NavLink>
-
-                    <NavLink
-                        to="/riscos"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Todos os riscos
-                    </NavLink>
-
-                    <NavLink
-                        to="/registrar-risco"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Registrar riscos
-                    </NavLink>
+                <div className="block">
+                    <h5>Em tratamento</h5>
+                    <p>11</p>
                 </div>
 
+                <div className="block">
+                    <h5>Concluídos</h5>
+                    <p>7</p>
+                </div>
+
+            </div>
+
+            <div className="Desafios">
+
+                <h3>Desafios estratégicos</h3>
+
+                <div className="cards">
+
+                    <div className="desafio-card">
+                        <h4>Desafio 1</h4>
+                        <p>Internacionalização</p>
+                        <label>3 riscos - 1 crítico</label>
+                    </div>
+
+                    <div className="desafio-card">
+                        <h4>Desafio 1</h4>
+                        <p>Internacionalização</p>
+                        <label>3 riscos - 1 crítico</label>
+                    </div>
+
+                    <div className="desafio-card">
+                        <h4>Desafio 1</h4>
+                        <p>Internacionalização</p>
+                        <label>3 riscos - 1 crítico</label>
+                    </div>
+
+                    <div className="desafio-card">
+                        <h4>Desafio 1</h4>
+                        <p>Internacionalização</p>
+                        <label>3 riscos - 1 crítico</label>
+                    </div>
+                    <div className="desafio-card">
+                        <h4>Desafio 1</h4>
+                        <p>Internacionalização</p>
+                        <label>3 riscos - 1 crítico</label>
+                    </div>
+
+                    <div className="desafio-card">
+                        <h4>Desafio 1</h4>
+                        <p>Internacionalização</p>
+                        <label>3 riscos - 1 crítico</label>
+                    </div>
+
+                    <div className="desafio-card">
+                        <h4>Desafio 1</h4>
+                        <p>Internacionalização</p>
+                        <label>3 riscos - 1 crítico</label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div className="botoes-acoes">
+                <NavLink to="/re" className="novo">+ Registrar novo Risco</NavLink>
+                <NavLink >Ver todos os Riscos </NavLink>
+                <NavLink>Matriz de Risco </NavLink>
+            </div>
+
+    </div>
 
 
-            </aside>
 
-
-        </main>
-
-
-    );
+);
 }
 
 
