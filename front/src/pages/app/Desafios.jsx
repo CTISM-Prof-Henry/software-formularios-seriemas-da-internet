@@ -1,72 +1,119 @@
-import photoUser from "../../assets/do-utilizador.png";
 import { Link, NavLink } from 'react-router-dom'
-import Painel from "./Painel.jsx";
 import {useAuth} from "../../hooks/useAuth.js";
+import '../../style/Desafios.css'
 
 
 function Desafios() {
 
-    const { usuario, fazerLogout } = useAuth()
+    const { usuario, fazerLogout } = useAuth();
 
     return (
-        <main>
 
-            <header>
-                <div className="logo">
-                    <h1>Gestor de Risco</h1>
-                    <p>| Planejamento 2026</p>
+        <div className="painel">
+
+            <div className="title">
+                <h2>Desafios Estratégiocs 2026</h2>
+                <label>Selecione um desafios para ver os riscos associados</label>
+            </div>
+
+            <div className="desafios">
+
+                <div className="desafio-row">
+
+                    <div className="grupo">
+                        <span className="numero">1</span>
+                        <div className="title">
+                            <h3>Internacionalizacao</h3>
+                            <label>3 riscos identificados - Progresso 40%</label>
+                        </div>
+                    </div>
+
+                    <Link to="#">Ver riscos</Link>
                 </div>
 
-                <div className="user">
-                    <p>{usuario.first_name + " " + usuario.last_name}</p>
-                    <img src={photoUser} alt="profile image" />
-                    <button onClick={fazerLogout}>Sair</button>
+                <div className="desafio-row">
+
+                    <div className="grupo">
+                        <span className="numero">1</span>
+                        <div className="title">
+                            <h3>Internacionalizacao</h3>
+                            <label>3 riscos identificados - Progresso 40%</label>
+                        </div>
+                    </div>
+
+                    <Link to="#">Ver riscos</Link>
                 </div>
 
-            </header>
+                <div className="desafio-row">
 
+                    <div className="grupo">
+                        <span className="numero">1</span>
+                        <div className="title">
+                            <h3>Internacionalizacao</h3>
+                            <label>3 riscos identificados - Progresso 40%</label>
+                        </div>
+                    </div>
 
-            <aside>
-
-
-                <div className="menu">
-                    <p>NAVEGAÇÃO</p>
-
-                    <NavLink
-                        to="/painel"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Painel
-                    </NavLink>
-
-                    <NavLink
-                        to="/desafios"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Desafios estratégicos
-                    </NavLink>
-
-                    <NavLink
-                        to="/riscos"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Todos os riscos
-                    </NavLink>
-
-                    <NavLink
-                        to="/registrar-risco"
-                        className={({ isActive }) => isActive ? 'menu-ativo' : 'menu-hover'}
-                    >
-                        Registrar riscos
-                    </NavLink>
+                    <Link to="#">Ver riscos</Link>
                 </div>
 
+                <div className="desafio-row">
+
+                    <div className="grupo">
+                        <span className="numero">1</span>
+                        <div className="title">
+                            <h3>Internacionalizacao</h3>
+                            <label>3 riscos identificados - Progresso 40%</label>
+                        </div>
+                    </div>
+
+                    <Link to="#">Ver riscos</Link>
+                </div>
+
+                <div className="desafio-row">
+
+                    <div className="grupo">
+                        <span className="numero">1</span>
+                        <div className="title">
+                            <h3>Internacionalizacao</h3>
+                            <label>3 riscos identificados - Progresso 40%</label>
+                        </div>
+                    </div>
+
+                    <Link to="#">Ver riscos</Link>
+                </div>
+
+                <div className="desafio-row">
+
+                    <div className="grupo">
+                        <span className="numero">1</span>
+                        <div className="title">
+                            <h3>Internacionalizacao</h3>
+                            <label>3 riscos identificados - Progresso 40%</label>
+                        </div>
+                    </div>
+
+                    <Link to="#">Ver riscos</Link>
+                </div>
+
+                <div className="desafio-row">
+
+                    <div className="grupo">
+                        <span className="numero">1</span>
+                        <div className="title">
+                            <h3>Internacionalizacao</h3>
+                            <label>3 riscos identificados - Progresso 40%</label>
+                        </div>
+                    </div>
+
+                    <Link to="#">Ver riscos</Link>
+                </div>
+
+            </div>
+        </div>
 
 
-            </aside>
 
-
-        </main>
     );
 }
 

@@ -1,0 +1,27 @@
+aside {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dark-blue);
+    width: 15%;
+    height: 75vh;
+    padding-top: 4vh;
+
+    & p {
+        padding: 0 1.5vw;
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    & a {
+        width: 100%;
+        padding: 10px 15px;
+        color: #FFFFFF;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+}
+
+aside a:hover {
+    background-color: var(--text-light);
+    border-left: 5px solid #007BFF;
+}
