@@ -33,7 +33,7 @@ function CadastroUsuario() {
               };
 
               try {
-                  const response = await fetch("http://localhost:8000/api/cadastro/", {
+                  const response = await fetch("http://localhost:8000/api/usuario/", {
                   method: "POST",
                   headers: {
                       "Content-Type": "application/json"

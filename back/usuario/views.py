@@ -3,8 +3,10 @@ from django.core.serializers import serialize
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from risco.serializer import RiscoSerializer
 from .models import Usuario
-from .serializer import UsuarioSerializer
+from .serializer import UsuarioSerializer, LoginSerializer
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -17,6 +19,7 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema
 
 @api_view(['GET'])
 def listar_usuarios(request):
@@ -31,9 +34,9 @@ def listar_usuarios(request):
 def get_usuario(request, uid):
 
     try:
-        userId = force_str(urlsafe_base64_decode(uid))
+        user_id = force_str(urlsafe_base64_decode(uid))
 
-        user = Usuario.objects.get(pk=userId)
+        user = Usuario.objects.get(pk=user_id)
 
     except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
 
@@ -47,12 +50,17 @@ def get_usuario(request, uid):
     else:
         return Response({"error": "Usuario nao existe!"}, status=404)
 
-
+@extend_schema(
+    summary="Login de usuario",
+    description="Faz login de usuario",
+    request=LoginSerializer,
+    responses={200: UsuarioSerializer(many=True)}
+)
 @csrf_exempt
 @api_view(['POST'])
 def fazer_login(request):
 
-    if  (request.method == 'POST'):
+    if  request.method == 'POST':
 
         try:
 
@@ -101,7 +109,11 @@ def fazer_login(request):
 
     return JsonResponse({'erro': 'Método não permitido'}, status=405)
 
-
+@extend_schema(
+    summary="Cadastra um usuario",
+    description="Cadastra um usuario e retorna mensagem de sucesso",
+    responses={200: UsuarioSerializer(many=True)}
+)
 @csrf_exempt
 @api_view(['POST'])
 def cadastrar_usuario(request):
@@ -127,6 +139,7 @@ def cadastrar_usuario(request):
         except Exception as e:
             return JsonResponse({"erro": "Falha do servidor", "detalhes": str(e)}, status=500)
 
+    return JsonResponse({'erro': 'Método não permitido'}, status=405)
 
 @csrf_exempt
 @api_view(['POST'])
@@ -189,6 +202,3 @@ def confirmar_reset_senha(request):
 
     except Exception:
         return JsonResponse({"erro": "Erro de servidor"}, status=500)
-
-
-print("Teste")

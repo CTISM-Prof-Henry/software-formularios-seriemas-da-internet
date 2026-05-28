@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
     'corsheaders',
     'usuario',
     'identificacao',
@@ -56,6 +57,17 @@ INSTALLED_APPS = [
     'desafio',
     'avaliacao'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Gestor de Riscos',
+    'DESCRIPTION': 'Documentação automatizada da API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

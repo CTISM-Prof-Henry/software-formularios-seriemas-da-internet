@@ -3,5 +3,5 @@ from . import views
 
 
 urlpatterns = [
-    path("api/identificacoes/", views.get_identificacoes, name="get_identificacoes"),
+    # path("api/identificacoes/", views.get_identificacoes, name="get_identificacoes"),
 ]
