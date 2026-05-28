@@ -9,12 +9,5 @@ from .models import Identificacao
 from usuario.models import Usuario
 
 
-@api_view(["GET"])
-def get_identificacoes(request):
 
-    identificacoes = Identificacao.objects.all()
-
-    serializer = IdentificacaoSerializer(identificacoes, many=True)
-
-    return Response(serializer.data)
 

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Tratamento(models.Model):
 
     resposta = models.CharField(max_length=250)
@@ -10,3 +11,7 @@ class Tratamento(models.Model):
     impacto_residual = models.IntegerField()
     indicadores = models.CharField(max_length=250)
 
+    risco = models.ForeignKey('risco.Risco', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.resposta} - {self.responsavel} - {self.prazo}"

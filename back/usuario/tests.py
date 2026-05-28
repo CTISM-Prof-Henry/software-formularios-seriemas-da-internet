@@ -27,11 +27,10 @@ class UsuarioAPITests(APITestCase):
 
         self.uid = urlsafe_base64_encode(force_bytes(self.usuario.pk))
 
-
         self.url_listar = '/api/usuarios/'
         self.url_get_usuario = f'/api/usuario/{self.uid}'
         self.url_login = '/api/login/'
-        self.url_cadastro = '/api/cadastro/'
+        self.url_cadastro = '/api/usuario/'
         self.url_reset = '/api/recuperar-senha/'
 
 

@@ -5,5 +5,16 @@ class RiscoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Risco
 
-        fields = '__all__'
+        fields = [
+            'id',
+            'descricao',
+            'categoria',
+            'responsavel',
+            'data_criacao',
+            'status',
+            'desafio'
+        ]
+
+
+
 

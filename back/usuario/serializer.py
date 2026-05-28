@@ -39,3 +39,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(help_text="Matricula do Usuario")
+    password = serializers.CharField(help_text="Senha do Usuario")
