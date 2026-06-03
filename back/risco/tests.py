@@ -50,7 +50,7 @@ class RiscoAPITest(APITestCase):
 
 
         self.url_get_riscos = '/api/riscos/'
-        self.url_get_risco_by_id = f'/api/riscos/{self.risco.id}/'
+        self.url_get_risco_by_id = f'/api/risco/{self.risco.id}/'
         self.url_create_risco = '/api/risco/'
 
     def test_get_riscos(self):
