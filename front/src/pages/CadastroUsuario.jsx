@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
 
@@ -16,6 +16,35 @@ function CadastroUsuario() {
         perfil_acesso: ""
       });
 
+    const [ sugestoesUnidades, setSugestoesUnidades ] = useState([])
+    const [ mostrarDropDown, setMostrarDropDown ] = useState(false)
+    const [ unidade, setUnidade ] = useState()
+
+    async function handleSearchUnidade(e) {
+        const valorDigitado = e.target.value;
+
+        setForm({ ...form, setor: valorDigitado });
+
+        if (valorDigitado.length >= 2) {
+            try {
+
+                const response = await fetch(`http://localhost:8000/api/unidades/?search=${valorDigitado}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setSugestoesUnidades(data);
+                    setMostrarDropDown(true);
+                    console.log(data);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar unidades:", error);
+            }
+        } else {
+
+            setSugestoesUnidades([]);
+            setMostrarDropDown(false);
+        }
+    }
+
       function handleChange(e) {
         setForm({
           ...form,
@@ -23,13 +52,20 @@ function CadastroUsuario() {
         });
       }
 
+      function selecionarUnidade(unidade) {
+            setForm({ ...form, setor: unidade.nome_unidade });
+            setUnidade(unidade.id)
+            setMostrarDropDown(false);
+            setSugestoesUnidades([]);
+      }
 
       async function handleSubmit(evento) {
               evento.preventDefault();
 
               const dadosParaEnviar = {
                 ...form,
-                username: form.matricula
+                  setor: unidade,
+                  username: form.matricula
               };
 
               try {
@@ -52,10 +88,8 @@ function CadastroUsuario() {
                       navigate('/')
                   } else {
 
-                      const isJson = response.headers.get("content-type")?.includes("application/json");
-                      const errorData = isJson ? await response.json() : await response.text();
-
-                      console.error("Erro ao cadastrar", errorData);
+                      const errorData = await response.json().catch(() => null) || await response.text();
+                      console.error("Erro retornado pelo backend:", errorData);
                   }
 
               } catch (erro) {
@@ -111,12 +145,37 @@ function CadastroUsuario() {
 
                             <div className="input-group">
                                 <label>Setor / Unidade</label>
-                                <input type="text" name="setor" placeholder="Politecnico" onChange={handleChange} value={form.setor} required/>
+                                <input
+                                    type="text"
+                                    name={"unidade"}
+                                    list="lista-unidades"
+                                    placeholder="Digite o nome ou a sigla (ex: CT, Politécnico)"
+                                    onChange={handleSearchUnidade}
+                                    value={form.setor}
+                                    required
+                                    autoComplete="off"
+                                    onBlur={() => setTimeout(() => setMostrarDropDown(false), 200)}
+                                    onFocus={() => sugestoesUnidades.length > 0 && setMostrarDropDown(true)}
+                                />
+
+                                {mostrarDropDown && sugestoesUnidades.length > 0 && (
+                                    <ul className="select-customizado">
+                                        {sugestoesUnidades.map((unidade) => (
+                                            <li
+                                                key={unidade.id}
+                                                onClick={() => selecionarUnidade(unidade)}
+                                            >
+                                                {unidade.nome_unidade} ({unidade.sigla_centro})
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+
                             </div>
 
                             <div className="input-group">
                                 <label>Perfil de acesso</label>
-                                <select type="text" name="perfil_acesso" placeholder="*******" className="select" onChange={handleChange} value={form.perfil} required>
+                                <select name="perfil_acesso" className="select" onChange={handleChange} value={form.perfil_acesso} required>
 
                                     <option value="" disabled>Selecione um perfil</option>
                                     <option value="Gestor de Risco">Gestor de Risco</option>

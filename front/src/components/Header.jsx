@@ -18,7 +18,7 @@ function Header () {
             </div>
 
             <div className="user">
-                <p>{usuario.first_name + " " + usuario.last_name}</p>
+                <p>{usuario.username}</p>
                 <p>{iniciais}</p>
                 <button onClick={fazerLogout}>Sair</button>
             </div>

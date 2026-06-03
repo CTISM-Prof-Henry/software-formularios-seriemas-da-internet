@@ -37,7 +37,6 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,11 +51,14 @@ INSTALLED_APPS = [
     'usuario',
     'identificacao',
     'relatorio',
+    'unidade',
     'risco',
+    'categoria',
     'tratamento',
     'desafio',
     'avaliacao'
 ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'

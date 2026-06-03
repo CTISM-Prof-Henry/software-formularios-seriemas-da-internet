@@ -4,9 +4,9 @@ from .models import Usuario
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        # fields = '__all__'
 
         fields = ['id',
+                  'username',
                   'first_name',
                   'last_name',
                   'email',
@@ -19,12 +19,20 @@ class UsuarioSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'username': {'required': False, 'allow_null': True},
         }
 
     def create(self, validated_data):
+        first_name = validated_data.get('first_name', '').strip()
+        last_name = validated_data.get('last_name', '').strip()
+
+        inicial_sobrenome = last_name[0] if last_name else ''
+        username_limpo = f"{first_name} {inicial_sobrenome[0].upper()}"
+        print(username_limpo)
+
         user = Usuario(
-            username=validated_data.get('matricula'),
+            username=username_limpo,
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
             email=validated_data.get('email'),

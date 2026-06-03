@@ -1,0 +1,159 @@
+
+
+.header-titulo h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.header-titulo p {
+    color: #4b5563;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+}
+
+
+.stepper-container {
+    display: flex;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #e5e7eb;
+    width: 70%;
+}
+
+.step {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #6b7280;
+    transition: background-color 0.3s;
+}
+
+.step.active {
+    background-color: #1a3250;
+    color: #ffffff;
+}
+
+.step-number {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.step-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+
+.slider-viewport {
+    width: 100%;
+    overflow: hidden;
+}
+
+.slider-track {
+    display: flex;
+    width: 300%;
+    transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.form-panel {
+    width: 33.333%;
+    padding-right: 20px;
+    flex-shrink: 0;
+}
+
+.form-panel h2 {
+    margin-bottom: 30px;
+    font-size: 1.4rem;
+}
+
+
+.formulario-risco {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+}
+
+.form-row {
+    display: flex;
+    gap: 40px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.half-width {
+    flex: 1;
+}
+
+.form-group label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 15px;
+}
+
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    border: none;
+    border-bottom: 1px solid #cbd5e1;
+    background: transparent;
+    padding: 0 0 10px 0;
+    font-size: 1rem;
+    color: #64748b;
+    resize: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-bottom-color: #1a3250;
+    color: #0f172a;
+}
+
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.btn-cancelar {
+    background: none;
+    border: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #111827;
+    cursor: pointer;
+}
+
+.btn-proximo {
+    background-color: #1a3250;
+    color: white;
+    padding: 14px 28px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+    justify-content: flex-end;
+}
+
+.btn-proximo:hover {
+    background-color: #112238;
+}

@@ -1,4 +1,3 @@
-from urllib import response
 from rest_framework.test import APITestCase
 from django.test import TestCase
 from rest_framework import status

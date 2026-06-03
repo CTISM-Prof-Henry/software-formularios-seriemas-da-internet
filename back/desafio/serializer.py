@@ -6,4 +6,12 @@ class DesafioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Desafio
 
-        fields = '__all__'
+        fields = [
+            'id',
+            'numero',
+            'nome',
+            'descricao',
+        ]
+
+    def create(self, validated_data):
+        return Desafio.objects.create(**validated_data)

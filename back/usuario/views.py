@@ -1,10 +1,5 @@
-from django.contrib.auth.hashers import check_password
-from django.core.serializers import serialize
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
-from risco.serializer import RiscoSerializer
 from .models import Usuario
 from .serializer import UsuarioSerializer, LoginSerializer
 from django.http import JsonResponse
@@ -17,7 +12,6 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
-from django.contrib.auth.models import User
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 
@@ -47,8 +41,7 @@ def get_usuario(request, uid):
 
         return Response(serializer.data)
 
-    else:
-        return Response({"error": "Usuario nao existe!"}, status=404)
+    return Response({"error": "Usuario nao existe!"}, status=404)
 
 @extend_schema(
     summary="Login de usuario",

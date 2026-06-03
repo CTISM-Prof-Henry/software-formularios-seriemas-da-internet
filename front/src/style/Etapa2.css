@@ -1,0 +1,186 @@
+
+.avaliacao-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.header-etapa h2 {
+    font-size: 1.6rem;
+    font-family: 'Times New Roman', serif;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.header-etapa p {
+    font-size: 1rem;
+    color: #374151;
+    margin-bottom: 40px;
+}
+
+
+.matriz-grid {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 50px;
+}
+
+.matriz-coluna {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.matriz-coluna label {
+    font-size: 1rem;
+    color: #1f2937;
+}
+
+.botoes-escala {
+    display: flex;
+    gap: 6px;
+    height: 65px;
+}
+
+.btn-escala {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-valor {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.btn-label {
+    font-size: 0.75rem;
+    margin-top: 2px;
+}
+
+
+.tema-verde {
+    background-color: #e6fcf5;
+    color: #2b8a3e;
+}
+.tema-laranja {
+    background-color: #fff4e6;
+    color: #d97706;
+}
+.tema-vermelho {
+    background-color: #ffe3e3;
+    color: #e03131;
+}
+.tema-cinza {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+}
+
+.tema-texto-verde { color: #2b8a3e; }
+.tema-texto-laranja { color: #d97706; }
+.tema-texto-vermelho { color: #e03131; }
+.tema-texto-cinza { color: #9ca3af; }
+
+
+.btn-escala.ativo-prob {
+    border-color: #334155;
+    transform: scale(1.03);
+}
+
+
+.btn-escala.ativo-imp {
+    border-color: #0284c7;
+    transform: scale(1.03);
+}
+
+
+.resultado-sessao {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.resultado-titulo {
+    font-size: 1.1rem;
+    color: #111827;
+}
+
+.resultado-dados {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+
+.resultado-numero {
+    font-size: 3.5rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1;
+}
+
+.resultado-detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detalhe-label {
+    font-size: 0.95rem;
+    color: #111827;
+}
+
+.badge-classificacao {
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.detalhe-valor {
+    font-size: 1rem;
+    color: #111827;
+}
+
+
+.actions-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 60px;
+}
+
+.btn-voltar {
+    background: none;
+    border: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111827;
+    cursor: pointer;
+}
+
+.btn-proximo {
+    background-color: #1a3250;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-proximo:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-proximo:hover:not(:disabled) {
+    background-color: #112238;
+}

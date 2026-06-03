@@ -1,0 +1,110 @@
+
+.tabela-container {
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.filtros-topo {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+
+.tabela-riscos {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: inherit;
+}
+
+.tabela-riscos th {
+  padding: 15px 10px;
+  font-size: 0.85rem;
+  color: #555;
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+}
+
+.tabela-riscos td {
+  padding: 20px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.tabela-riscos .codigo {
+  font-weight: 500;
+}
+
+.tabela-riscos .descricao {
+  max-width: 300px;
+}
+
+
+.badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+}
+
+
+.badge-azul {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.badge-roxo {
+  background-color: #f3e8ff;
+  color: #9333ea;
+}
+
+.badge-vermelho {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.badge-verde {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.badge-laranja {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+.badge-cinza {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+
+.btn-ver {
+  background: none;
+  border: none;
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: 0.2s;
+}
+
+.btn-ver:hover {
+  color: #007BFF;
+}
+
+
+.rodape-tabela {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #666;
+}

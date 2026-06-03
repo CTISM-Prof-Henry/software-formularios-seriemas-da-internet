@@ -1,0 +1,21 @@
+site_name: Documentação - Gestor de Risco UFSM
+site_description: Documentação técnica do sistema de gestão de riscos.
+site_author: Lázaro Scolari
+
+
+theme:
+  name: material
+  language: pt-BR
+  palette:
+    primary: indigo
+    accent: blue
+
+
+nav:
+  - Início: index.md
+  - Backend (Django):
+      - Bibliotecas: bibliotecas-back.md
+      - Rotas: rotas.md
+  - Frontend (React):
+    - Componentes: components-front.md
+  - Instalação: instalacao.md

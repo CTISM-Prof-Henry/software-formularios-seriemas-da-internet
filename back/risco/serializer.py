@@ -15,6 +15,9 @@ class RiscoSerializer(serializers.ModelSerializer):
             'desafio'
         ]
 
+    def create(self, validated_data):
+        return Risco.objects.create(**validated_data)
+
 
 
 
