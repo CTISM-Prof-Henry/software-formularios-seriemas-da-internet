@@ -17,7 +17,7 @@ function Aside() {
                 Desafios estratégicos
             </NavLink>
 
-            <NavLink to="/riscos" className="nav-option">
+            <NavLink to="/todos-riscos" className="nav-option">
                 Todos os riscos
             </NavLink>
 

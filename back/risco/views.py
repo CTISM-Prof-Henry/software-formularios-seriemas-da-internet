@@ -1,8 +1,3 @@
-import json
-
-from django.core.checks.security import csrf
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -41,8 +36,7 @@ def get_risco_by_id(request, id):
 
         return Response(serializer.data, status=HTTP_200_OK)
 
-    else:
-        return Response({"error": "Risco nao encontrado!"}, status=HTTP_404_NOT_FOUND)
+    return Response({"error": "Risco nao encontrado!"}, status=HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
@@ -70,7 +64,6 @@ def create_risco(request):
             return Response({
                 "error": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
     return Response({"erro": "Metodo nao permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 

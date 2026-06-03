@@ -1,20 +1,17 @@
 from django.db import models
 
 
-
-
 class Risco(models.Model):
 
-    descricao = models.CharField(max_length=250, null=True, blank=True)
-    categoria = models.CharField(max_length=50, null=True, blank=True)
-    responsavel = models.CharField(max_length=40, null=True, blank=True)
     data_criacao = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=25, null=True, blank=True)
 
-    desafio = models.ForeignKey('desafio.Desafio', on_delete=models.SET_NULL, null=True, blank=True)
+    categoria = models.ForeignKey('categoria.Categoria', on_delete=models.CASCADE, null=True, blank=True)
+    unidade_responsavel = models.ForeignKey('unidade.Unidade', on_delete=models.SET_NULL, null=True, blank=True)
+   
 
     def __str__(self):
-        return f"{self.descricao} - {self.data_criacao}"
+        return f"{self.categoria} - {self.data_criacao}"
 
 
 class UsuarioRisco(models.Model):

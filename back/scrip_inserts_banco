@@ -1,0 +1,20 @@
+import json
+
+from desafio.models import Desafio 
+
+
+with open('desafios.json', 'r', encoding='utf-8') as f:
+    dados = json.load(f)
+       id=item.get('id'),
+        defaults={
+ 	    'numero': item.get('numero'),	    
+            'nome': item.get('nome'),
+            'descricao': item.get('descricao'),
+        }
+    )
+    if criado:
+        print(f"Desafio '{desafio.nome}' cadastrado com sucesso!")
+    else:
+        print(f"Desafio '{desafio.nome}' já existia no banco.")
+
+exit()

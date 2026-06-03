@@ -2,10 +2,14 @@ import { Link, NavLink,  } from 'react-router-dom'
 import '../../style/Painel.css'
 import '../../style/Main.css'
 import {useAuth} from "../../hooks/useAuth.js";
+import {TodosRiscos} from "../../hooks/useRiscos.js";
+import {useDesafios} from "../../hooks/useDesafios.js";
 
 function Painel() {
 
     const { usuario, fazerLogout } = useAuth()
+    const { riscos } = TodosRiscos()
+    const { desafios } = useDesafios()
 
 
     return (
@@ -21,7 +25,7 @@ function Painel() {
 
                 <div className="block">
                     <h5>Total de riscos</h5>
-                    <p>24</p>
+                    <p>{riscos.length}</p>
                 </div>
 
                 <div className="block">
@@ -47,46 +51,13 @@ function Painel() {
 
                 <div className="cards">
 
-                    <div className="desafio-card">
-                        <h4>Desafio 1</h4>
-                        <p>Internacionalização</p>
-                        <label>3 riscos - 1 crítico</label>
-                    </div>
-
-                    <div className="desafio-card">
-                        <h4>Desafio 1</h4>
-                        <p>Internacionalização</p>
-                        <label>3 riscos - 1 crítico</label>
-                    </div>
-
-                    <div className="desafio-card">
-                        <h4>Desafio 1</h4>
-                        <p>Internacionalização</p>
-                        <label>3 riscos - 1 crítico</label>
-                    </div>
-
-                    <div className="desafio-card">
-                        <h4>Desafio 1</h4>
-                        <p>Internacionalização</p>
-                        <label>3 riscos - 1 crítico</label>
-                    </div>
-                    <div className="desafio-card">
-                        <h4>Desafio 1</h4>
-                        <p>Internacionalização</p>
-                        <label>3 riscos - 1 crítico</label>
-                    </div>
-
-                    <div className="desafio-card">
-                        <h4>Desafio 1</h4>
-                        <p>Internacionalização</p>
-                        <label>3 riscos - 1 crítico</label>
-                    </div>
-
-                    <div className="desafio-card">
-                        <h4>Desafio 1</h4>
-                        <p>Internacionalização</p>
-                        <label>3 riscos - 1 crítico</label>
-                    </div>
+                    {desafios.map((desafio) => (
+                        <div className="desafio-card" key={desafio.id}>
+                            <h4>Desafio {desafio.id}</h4>
+                            <p>{desafio.nome}</p>
+                            <label>3 riscos - 1 crítico</label>
+                        </div>
+                    ))}
 
                 </div>
 

@@ -22,6 +22,17 @@
   }
 }
 
+body, input, select, button, table {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, .title h1 {
+  font-family: 'Source Serif 4', sans-serif;
+  letter-spacing: -0.02em;
+}
+
 /*@media (prefers-color-scheme: dark) {*/
 /*  :root {*/
 /*    --text: #9ca3af;*/

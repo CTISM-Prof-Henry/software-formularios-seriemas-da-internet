@@ -58,7 +58,7 @@ function Login() {
                 <section>
 
                     <div className="title">
-                        <h1>Gestor de Risco</h1>
+                        <h1>Gestor de Risco </h1>
                         <p>Sistema de Gestão de Risco Institucional</p>
                     </div>
 
