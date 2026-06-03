@@ -49,14 +49,12 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'corsheaders',
     'usuario',
-    'identificacao',
     'relatorio',
     'unidade',
     'risco',
     'categoria',
-    'tratamento',
     'desafio',
-    'avaliacao'
+    'formulario'
 ]
 
 

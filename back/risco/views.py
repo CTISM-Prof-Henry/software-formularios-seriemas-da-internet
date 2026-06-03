@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_201_CREATED
 
+from formulario import serializer
 from risco.models import Risco
 from risco.serializer import RiscoSerializer
 
@@ -10,9 +11,9 @@ from risco.serializer import RiscoSerializer
 @api_view(['GET'])
 def get_riscos(request):
 
-    riscos = Risco.objects.all()
 
     try:
+        riscos = Risco.objects.all()
 
         serializer = RiscoSerializer(riscos, many=True)
 
@@ -28,16 +29,14 @@ def get_risco_by_id(request, id):
     try:
         risco = Risco.objects.get(pk=id)
 
-    except Risco.DoesNotExist:
-        risco = None
-
-    if risco:
         serializer = RiscoSerializer(risco)
-
         return Response(serializer.data, status=HTTP_200_OK)
 
-    return Response({"error": "Risco nao encontrado!"}, status=HTTP_404_NOT_FOUND)
+    except Risco.DoesNotExist:
+        return Response({"error": "Risco não encontrado"}, status=HTTP_404_NOT_FOUND)
 
+    except Exception as e:
+        return Response({"error": str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def create_risco(request):
@@ -50,9 +49,11 @@ def create_risco(request):
             if serializer.is_valid():
 
                 serializer.save()
-                print(f"Dados do risco: {serializer.data}")
 
-                return Response({"message": "Risco cadastrado com sucesso!"}, status=HTTP_201_CREATED)
+                return Response({
+                    "message": "Risco cadastrado com sucesso!",
+                    "risco": serializer.data
+                }, status=HTTP_201_CREATED)
 
             return Response({
                 "erro": "Dados invalidos",

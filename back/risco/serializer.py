@@ -5,15 +5,7 @@ class RiscoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Risco
 
-        fields = [
-            'id',
-            'descricao',
-            'categoria',
-            'responsavel',
-            'data_criacao',
-            'status',
-            'desafio'
-        ]
+        fields = '__all__'
 
     def create(self, validated_data):
         return Risco.objects.create(**validated_data)
