@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, att]
+    branches: [main, feature/painel-incial]
   pull_request:
     branches: [main]
 

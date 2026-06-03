@@ -3,6 +3,9 @@ from rest_framework import status
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core import mail
+
+import unidade
+from unidade.models import Unidade
 from .models import Usuario
 
 
@@ -10,14 +13,20 @@ class UsuarioAPITests(APITestCase):
 
     def setUp(self):
 
+        self.unidade_teste = Unidade.objects.create(
+            id=211,
+            nome_unidade="Setor de Teste UFSM",
+            sigla_centro="UFSM"
+        )
+
         self.senha_teste = "senhaSegura@123"
         self.usuario = Usuario(
-            username="20261010",
+            username="João S",
             matricula="20261010",
             email="teste@ufsm.br",
             first_name="João",
             last_name="Silva",
-            setor="Politécnico",
+            setor=self.unidade_teste,
             perfil_acesso="Gestor de Risco"
         )
         self.usuario.set_password(self.senha_teste)
@@ -88,13 +97,14 @@ class UsuarioAPITests(APITestCase):
 
 
     def test_cadastrar_usuario_sucesso(self):
+
         novo_usuario = {
             "username": "20262020",
             "matricula": "20262020",
             "email": "novo@ufsm.br",
             "first_name": "Maria",
             "last_name": "Souza",
-            "setor": "CT",
+            "setor": self.unidade_teste.id,
             "perfil_acesso": "Auditor",
             "password": "senhaForte!321"
         }

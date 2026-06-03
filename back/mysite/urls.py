@@ -11,6 +11,5 @@ urlpatterns = [
     path('', include('usuario.urls')),
     path('', include('risco.urls')),
     path('', include('unidade.urls')),
-    path('', include('identificacao.urls')),
     path('', include('desafio.urls'))
 ]
