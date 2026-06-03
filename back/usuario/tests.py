@@ -1,10 +1,8 @@
-from rest_framework.test import APITestCase
-from rest_framework import status
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
 from django.core import mail
-
-import unidade
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from rest_framework import status
+from rest_framework.test import APITestCase
 from unidade.models import Unidade
 from .models import Usuario
 

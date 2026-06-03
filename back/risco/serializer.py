@@ -1,5 +1,5 @@
-from .models import Risco
 from rest_framework import serializers
+from .models import Risco
 
 class RiscoSerializer(serializers.ModelSerializer):
     class Meta:
