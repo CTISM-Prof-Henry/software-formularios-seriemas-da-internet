@@ -2,8 +2,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_201_CREATED
-
-from formulario import serializer
 from risco.models import Risco
 from risco.serializer import RiscoSerializer
 
@@ -24,10 +22,10 @@ def get_riscos(request):
 
 
 @api_view(['GET'])
-def get_risco_by_id(request, id):
+def get_risco_by_id(request, pk):
 
     try:
-        risco = Risco.objects.get(pk=id)
+        risco = Risco.objects.get(pk=pk)
 
         serializer = RiscoSerializer(risco)
         return Response(serializer.data, status=HTTP_200_OK)

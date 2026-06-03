@@ -1,19 +1,18 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Usuario
-from .serializer import UsuarioSerializer, LoginSerializer
-from django.http import JsonResponse
 import json
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_str
-from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
 from django.utils import timezone
+from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from drf_spectacular.utils import extend_schema
+from .serializer import UsuarioSerializer, LoginSerializer
+from .models import Usuario
 
 @api_view(['GET'])
 def listar_usuarios(request):
@@ -33,7 +32,6 @@ def get_usuario(request, uid):
         user = Usuario.objects.get(pk=user_id)
 
     except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
-
         user = None
 
     if user:
@@ -61,7 +59,7 @@ def fazer_login(request):
             matricula = dados.get('matricula')
             senha = dados.get('senha')
 
-            print(f"\n--- TENTATIVA DE LOGIN ---")
+            print("\n--- TENTATIVA DE LOGIN ---")
             print(f"Matrícula recebida: '{matricula}'")
 
             usuario = Usuario.objects.filter(matricula=matricula).first()
@@ -86,11 +84,10 @@ def fazer_login(request):
                         'uid': uid
                     }, status=200)
 
-                else:
-                    return JsonResponse({'erro': 'Senha incorreta'}, status=401)
 
-            else:
-                return JsonResponse({'erro': 'Usuário não encontrado'}, status=404)
+                return JsonResponse({'erro': 'Senha incorreta'}, status=401)
+
+            return JsonResponse({'erro': 'Usuário não encontrado'}, status=404)
 
 
         except Exception as e:
@@ -168,8 +165,7 @@ def reset_senha(request):
         return JsonResponse({"erro": "Email nao existe entre os usuairos"}, status=400)
 
     except Exception as e:
-
-        return JsonResponse({"erro": "Erro de servidor"}, status=500)
+        return JsonResponse({"erro": "Erro de servidor", "detalhes": str(e)}, status=500)
  
 
 @csrf_exempt
@@ -181,8 +177,8 @@ def confirmar_reset_senha(request):
     nova_senha = request.data.get('nova_senha')
 
     try:
-        userId = force_str(urlsafe_base64_decode(uid))
-        user = Usuario.objects.get(pk=userId)
+        user_id = force_str(urlsafe_base64_decode(uid))
+        user = Usuario.objects.get(pk=user_id)
 
         if user and default_token_generator.check_token(user, token):
 
@@ -193,5 +189,5 @@ def confirmar_reset_senha(request):
 
         return JsonResponse({"erro": "Link de redefinicao invalido"}, status=400)
 
-    except Exception:
-        return JsonResponse({"erro": "Erro de servidor"}, status=500)
+    except Exception as e:
+        return JsonResponse({"erro": "Erro de servidor", "detalhes": str(e)}, status=500)

@@ -1,5 +1,5 @@
-from .models import Unidade
 from rest_framework import serializers
+from .models import Unidade
 
 class UnidadeSerializer(serializers.ModelSerializer):
     class Meta:
