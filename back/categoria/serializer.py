@@ -7,8 +7,8 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
         fields = [
             'id',
-            'nome_categoria'
-            'descricao',
+            'nome_categoria',
+            'descricao_categoria',
         ]
 
     def create(self, validated_data):

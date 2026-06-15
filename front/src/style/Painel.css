@@ -1,123 +1,297 @@
 
+.painel-dashboard {
+    padding: 30px;
+    background-color: var(--bg-main);
+    font-family: var(--inter), -apple-system, sans-serif;
+    color: var(--text-dark);
+    width: 100%;
+    height: 100%;
+}
 
-.riscos-estatisticas {
+.dashboard-header {
     display: flex;
-    flex-direction: row;
-    gap: 4vw;
-    margin: 5vh 20px;
-    font-size: 1.3rem;
-
-    & :nth-of-type(2) {
-        color: rgb(253 30 30 / 0.87);
-    }
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px 40px;
-    margin-top: 3vh;
-    margin-left: 0.5vw;
+.header-titles h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    color: var(--text-darker);
 }
 
+.header-titles p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
 
-.desafio-card {
-    border-bottom: solid 1px #e2e8f0;
-    padding: 10px 10px 16px 10px;
+.header-actions {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    transition: 0.3s;
-    border-radius: 10px;
+    gap: 15px;
 }
 
-
-.desafio-card:hover {
-    border-color: #94a3b8;
-    box-shadow: 0 0 2px #94a3b8;
-}
-
-
-.desafio-card h4 {
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #64748b;
-    margin: 0;
-}
-
-
-.desafio-card p {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #0f172a;
-    margin: 0;
-    line-height: 1.4;
-}
-
-.desafio-card label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #334155;
-    margin: 0;
-
-
+.header-actions p {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 4px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
 }
 
-
-.desafio-card label::before {
-    content: "";
+.header-actions .btn-primary:hover .icon {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    animation: girar 0.8s ease-in-out;
+}
+
+.header-filters {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.limit-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.limit-filter select {
+    padding: 6px 12px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    outline: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.limit-filter select:focus {
+    border-color: var(--focus-blue);
+}
+
+@keyframes girar {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.btn-light {
+    background-color: var(--badge-bg);
+    color: var(--text-darker);
+}
+
+.btn-primary {
+    background-color: var(--brand-light-blue);
+    color: #ffffff;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.kpi-card {
+    background: var(--white);
+    border-radius: var(--border-color, 10px);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    border-left: 4px solid transparent;
+}
+
+.kpi-card.border-dark { border-left-color: var(--border-color); }
+.kpi-card.border-red { border-left-color: var(--brand-red); }
+.kpi-card.border-blue { border-left-color: var(--brand-light-blue); color: var(--brand-light-blue);}
+.kpi-card.border-gray { border-left-color: var(--inactive-color); }
+
+.kpi-card h5 {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 5px 0;
+}
+
+.kpi-card h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-darker);
+}
+
+.text-red { color: var(--brand-red) !important; }
+
+.card {
+    background: var(--white);
+    border-radius: var(--border-color, 10px);
+    padding: 25px;
+    box-shadow: var(--shadow-sm);
+}
+
+.table-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.table-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    margin: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-darker);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr:nth-child(2n) {
+    background: var(--light-gray);
+}
+
+th, td {
+    padding: 15px 25px;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+th {
+    background: var(--bg-main);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+td {
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+td strong {
+    color: var(--text-darker);
+    display: block;
+}
+
+.sub-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.avatar-pk {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background-color: #ef4444;
-}
-
-
-.desafio-card.estavel label::before {
-    background-color: #22c55e;
-}
-
-
-.botoes-acoes {
-   position: absolute;
-    right: 4vw;
-    bottom: 7vh;
-
-
-    & * {
-        margin: 10px 40px;
-        transition: 0.2s;
-        text-decoration: none;
-        color: var(--text-h);
-    }
-
-    & :hover {
-        color: var(--text-light);
-        cursor: pointer;
-    }
-}
-
-.novo {
-    background-color: var(--dark-blue);
+    background: var(--brand-dark);
     color: #ffffff;
-    padding: 8px;
-    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
 }
 
-.novo:hover {
-    background-color: #1d416a;
-    color: #ffffff;
+.avatar-pk.blue { background: var(--brand-light-blue); }
+.avatar-pk.purple { background: var(--accent); }
+.avatar-pk.cyan { background: var(--focus-blue); }
+
+.badge-impacto, .badge-probabilidade, .badge-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: inline-block;
+    text-align: center;
+    letter-spacing: 0.5px;
 }
 
+.badge-impacto.muito-alto, .badge-probabilidade.muito-alto { background: var(--light-red); color: var(--brand-red); }
+.badge-impacto.alto, .badge-probabilidade.alto { background: #ffedd5; color: #ea580c; }
+.badge-impacto.medio, .badge-probabilidade.medio { background: #e0e7ff; color: #4f46e5; }
+.badge-impacto.baixo, .badge-probabilidade.baixo { background: var(--hm-green); color: var(--hm-green-text); }
+.badge-impacto.minimo, .badge-probabilidade.minimo { background: var(--badge-bg); color: var(--text-dark); }
+.badge-impacto.muito-baixo, .badge-probabilidade.muito-baixo { background: var(--light-gray); color: var(--text-muted); }
 
+.badge-status.identificado { background-color: var(--lighter-blue); color: var(--brand-light-blue); }
+.badge-status.avaliado { background-color: #fef3c7; color: #b45309; }
+.badge-status.tratamento { background-color: var(--light-red); color: var(--brand-red); }
 
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
 
+.pagination button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 0 10px;
+}
 
+.add-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+    background-color: var(--brand-light-blue);
+    padding: 10px 17px;
+    border-radius: 15px;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.2s;
+    opacity: 0.9;
+    box-shadow: var(--shadow-sm);
+}
+
+.add-btn a {
+    color: #FFFFFF;
+    text-decoration: none;
+    display: block;
+}
+
+.add-btn:hover {
+    background-color: var(--brand-blue-hover);
+    transform: translateY(-2px);
+    opacity: 1;
+}

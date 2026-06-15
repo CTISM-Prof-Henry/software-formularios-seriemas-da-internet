@@ -2,21 +2,30 @@ from rest_framework import serializers
 from .models import Usuario
 
 class UsuarioSerializer(serializers.ModelSerializer):
+
+    nome_unidade = serializers.CharField(source='unidade.nome_unidade', read_only=True)
+
     class Meta:
         model = Usuario
 
-        fields = ['id',
-                  'username',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'password',
-                  'matricula',
-                  'setor',
-                  'perfil_acesso',
-                  'date_joined',
-                  'last_login',
+        fields = [
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'password',
+            'matricula',
+            'perfil_acesso',
+            'date_joined',
+            'last_login',
+            'unidade',
+            'nome_unidade',
+            'centro_ativo',
+            'centros_permitidos'
         ]
+
+        # fields = '__all__'
 
         extra_kwargs = {
             'password': {'write_only': True},
@@ -28,23 +37,29 @@ class UsuarioSerializer(serializers.ModelSerializer):
         last_name = validated_data.get('last_name', '').strip()
 
         inicial_sobrenome = last_name[0] if last_name else ''
-        username_limpo = f"{first_name} {inicial_sobrenome[0].upper()}"
+        username_limpo = f"{first_name}{inicial_sobrenome.upper()}"
         print(username_limpo)
+
+        centros_permitidos = validated_data.pop('centros_permitidos', [])
+
 
         user = Usuario(
             username=username_limpo,
-            first_name=validated_data.get('first_name'),
-            last_name=validated_data.get('last_name'),
+            first_name=first_name,
+            last_name=last_name,
             email=validated_data.get('email'),
             matricula=validated_data.get('matricula'),
-            setor=validated_data.get('setor'),
+            unidade=validated_data.get('unidade'),
+            centro_ativo=validated_data.get('centro_ativo'),
             perfil_acesso=validated_data.get('perfil_acesso'),
             is_staff=True,
         )
 
         user.set_password(validated_data.get('password'))
-
         user.save()
+
+        if centros_permitidos:
+            user.centros_permitidos.set(centros_permitidos)
 
         return user
 

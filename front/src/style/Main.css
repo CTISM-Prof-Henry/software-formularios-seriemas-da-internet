@@ -9,12 +9,6 @@ main {
     flex-direction: column;
 }
 
-
-.nav-option.active {
-    background-color: var(--text-light);
-    border-left: 5px solid #007BFF;
-}
-
 .menu {
     display: flex;
     flex-direction: row;
@@ -23,6 +17,8 @@ main {
 .painel {
     padding: 6vh 4vw;
 }
+
+
 
 
 

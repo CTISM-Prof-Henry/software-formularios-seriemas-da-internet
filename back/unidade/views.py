@@ -22,8 +22,7 @@ def get_unidades(request):
 
     try:
         serializer = UnidadeSerializer(unidades, many=True)
-        print(serializer.data)
-
+    
         return Response(serializer.data, status=HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,52 +1,181 @@
-import { Link, NavLink } from 'react-router-dom'
-import {useAuth} from "../../hooks/useAuth.js";
-import '../../style/Desafios.css'
-import {useDesafios} from "../../hooks/useDesafios.js";
-
+import React, {useState, useEffect} from 'react';
+import '../../style/Desafios.css';
+import {TbWorld} from "react-icons/tb";
+import {
+    MdSchool,
+    MdPeople,
+    MdScience,
+    MdEnergySavingsLeaf,
+    MdArrowRightAlt,
+    MdBusinessCenter,
+    MdTrendingUp
+} from "react-icons/md";
+import {useAuth} from "../../hooks/AuthContext.jsx";
+import {useNavigate} from 'react-router-dom';
 
 function Desafios() {
-    
-    const { desafios, carregando } = useDesafios();
+    const {usuario} = useAuth();
+    const isAuditor = usuario?.perfil_acesso?.toLowerCase() === 'auditor';
+    const navigate = useNavigate();
 
-    if (carregando) {
-        return <div className="loading">Carregando desafios estratégicos...</div>;
-    }
+
+    const [desafios, setDesafios] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDesafios = async () => {
+            try {
+
+                const response = await fetch('http://localhost:8000/api/desafios/', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'}
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setDesafios(data);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar desafios:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDesafios();
+    }, []);
+
+
+    const irParaRiscos = (nomeDesafio) => {
+        navigate(`/todos-riscos?q=${encodeURIComponent(nomeDesafio)}`);
+    };
+
+
+    const getVisualDoDesafio = (nome) => {
+        const nomeLower = nome.toLowerCase();
+
+        if (nomeLower.includes('internacionalização')) {
+            return {
+                icon: <TbWorld/>,
+                iconBoxClass: 'gray-light',
+                badgeClass: 'badge-blue',
+                badgeText: 'ALTA PRIORIDADE'
+            };
+        }
+        if (nomeLower.includes('educação') || nomeLower.includes('acadêmica')) {
+            return {
+                icon: <MdSchool/>,
+                iconBoxClass: 'gray-light',
+                badgeClass: 'badge-blue-light',
+                badgeText: 'ESTRATÉGICO'
+            };
+        }
+        if (nomeLower.includes('inclusão')) {
+            return {icon: <MdPeople/>, iconBoxClass: 'red-light', badgeClass: 'badge-red', badgeText: 'ALERTA CRÍTICO'};
+        }
+        if (nomeLower.includes('inovação') || nomeLower.includes('tecnologia')) {
+            return {
+                icon: <MdScience/>,
+                iconBoxClass: 'gray-light',
+                badgeClass: 'badge-blue-light',
+                badgeText: 'INOVAÇÃO'
+            };
+        }
+        if (nomeLower.includes('ambiental') || nomeLower.includes('sustentável')) {
+            return {
+                icon: <MdEnergySavingsLeaf/>,
+                iconBoxClass: 'gray-light',
+                badgeClass: 'badge-blue-light',
+                badgeText: 'AMBIENTAL'
+            };
+        }
+        if (nomeLower.includes('modernização') || nomeLower.includes('organizacional')) {
+            return {
+                icon: <MdBusinessCenter/>,
+                iconBoxClass: 'gray-light',
+                badgeClass: 'badge-blue-light',
+                badgeText: 'OPERACIONAL'
+            };
+        }
+        if (nomeLower.includes('desenvolvimento') || nomeLower.includes('regional')) {
+            return {
+                icon: <MdTrendingUp/>,
+                iconBoxClass: 'gray-light',
+                badgeClass: 'badge-blue-light',
+                badgeText: 'INSTITUCIONAL'
+            };
+        }
+
+        return {icon: <TbWorld/>, iconBoxClass: 'gray-light', badgeClass: 'badge-blue-light', badgeText: 'ESTRATÉGICO'};
+    };
 
     return (
-
-        <div className="painel">
-
-            <div className="title">
-                <h2>Desafios Estratégicos 2026</h2>
-                <p>Selecione um desafios para ver os riscos associados</p>
+        <div className="desafios-page">
+            <div className="desafios-header">
+                <div className="header-info">
+                    <div className="header-title">
+                        <h1>Desafios Estratégicos</h1>
+                        <p>
+                            Monitoramento do progresso institucional e mitigação de riscos críticos associados aos
+                            objetivos
+                            do Ciclo 2026.
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div className="desafios">
+            {loading ? (
+                <h3 style={{padding: '20px'}}>Carregando desafios...</h3>
+            ) : (
+                <div className="desafios-grid">
 
-                {desafios.map((desafio, index) => (
+                    {desafios.map((desafio) => {
+                        const visual = getVisualDoDesafio(desafio.nome);
 
-                    <div className="desafio-row" key={index}>
+                        return (
+                            <div className="desafio-card" key={desafio.id}>
+                                <div className="card-top">
+                                    <div className={`icon-box ${visual.iconBoxClass}`}>
+                                        {visual.icon}
+                                    </div>
+                                    <span className={`badge ${visual.badgeClass}`}>
+                                        {visual.badgeText}
+                                    </span>
+                                </div>
 
-                        <div className="grupo">
-                            <span className="numero">{desafio.numero}</span>
-                            <div className="title">
-                                <h3>{desafio.nome}</h3>
-                                <label>3 riscos identificados - Progresso 40%</label>
+                                <h3>{desafio.numero} - {desafio.nome}</h3>
+
+                                <p>{desafio.descricao ? desafio.descricao : 'Descrição não definida'}</p>
+
+                                <button
+                                    className="btn-card-outline"
+                                    onClick={() => irParaRiscos(desafio.nome)}
+                                >
+                                    Ver riscos associados
+                                    <MdArrowRightAlt/>
+                                </button>
+                            </div>
+                        );
+                    })}
+
+
+                    {isAuditor && (
+                        <div className="desafio-card card-add">
+                            <div className="add-content">
+                                <div className="icon-box-large grey-light">
+                                    <span style={{fontSize: '2rem', color: '#94a3b8'}}>+</span>
+                                </div>
+                                <h3>Novo Desafio</h3>
+                                <p>Adicione um novo objetivo institucional para iniciar o mapeamento de riscos.</p>
                             </div>
                         </div>
+                    )}
 
-                        <Link to={`todos-riscos?search=${desafio.id}`}>Ver riscos</Link>
-                    </div>
-
-                ))}
-
-            </div>
+                </div>
+            )}
         </div>
-
-
-
     );
 }
 
-
-export default Desafios
+export default Desafios;

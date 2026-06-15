@@ -27,7 +27,7 @@ A arquitetura do projeto é conteinerizada e dividida em microsserviços estrutu
 Para começar a explorar o código ou configurar o seu ambiente, acesse os tópicos abaixo:
 
 1. [**Guia de Inicialização (Instalação e Docker)**](instalacao.md) - *Aprenda a clonar e rodar o projeto do zero.*
-2. [**Documentação do Backend**](backend-bibliotecas.md) - *Bibliotecas, ORM e Endpoints do Django.*
-3. [**Documentação do Frontend**](frontend.md) - *Componentes, rotas e estrutura do React.*
+2. [**Documentação do Backend**](bibliotecas-back.md) - *Bibliotecas, ORM e Endpoints do Django.*
+3. [**Documentação do Frontend**](components-front.md) - *Componentes, rotas e estrutura do React.*
 
 ---

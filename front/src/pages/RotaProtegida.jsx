@@ -1,15 +1,24 @@
-import { Navigate, Outlet }  from  'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAuth } from '../hooks/AuthContext.jsx'
 
-function RotaProtegida()  {
-    const uid = localStorage.getItem('uid')
+function RotaProtegida() {
 
-    if (!uid) {
-        return <Navigate to="/" />
+    const { usuario, carregando } = useAuth();
+    const uidStorage = localStorage.getItem('uid');
+
+    if (carregando) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20vh', color: '#0f172a' }}>
+                <h2>Carregando sessão...</h2>
+            </div>
+        );
     }
-
-    console.log(uid)
+    
+    if (!usuario && !uidStorage) {
+        return <Navigate to="/" replace />;
+    }
 
     return <Outlet />;
 }
 
-export default RotaProtegida
+export default RotaProtegida;

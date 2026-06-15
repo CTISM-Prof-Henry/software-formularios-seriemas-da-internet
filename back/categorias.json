@@ -1,0 +1,30 @@
+[
+  {
+    "nome": "Risco Estratégico",
+    "descricao": "Eventos que possam impactar na missão, nas metas ou nos objetivos estratégicos da unidade/órgão, caso venham ocorrer."
+  },
+  {
+    "nome": "Risco Operacional",
+    "descricao": "Tipificados como eventos que podem comprometer as atividades do órgão ou entidade, normalmente associados a falhas, deficiência ou inadequação de processos internos, pessoas, infraestrutura e sistemas."
+  },
+  {
+    "nome": "Risco de Integridade",
+    "descricao": "Eventos que podem favorecer ou facilitar a ocorrência de práticas de corrupção, fraudes, irregularidades e/ou desvios éticos e de conduta, que podem comprometer os objetivos da instituição."
+  },
+  {
+    "nome": "Risco de Imagem",
+    "descricao": "São eventos que podem comprometer a confiança da sociedade, inclusive parceiros, clientes e fornecedores, em relação à capacidade do órgão ou da entidade em cumprir sua missão institucional."
+  },
+  {
+    "nome": "Risco de Legal/Conformidade",
+    "descricao": "São eventos derivados de alterações legislativas ou normativas que podem comprometer as atividades do órgão ou entidade."
+  },
+  {
+    "nome": "Risco Financeiro/Orçamentário",
+    "descricao": "São eventos que podem comprometer a capacidade do órgão ou entidade de contar com os recursos orçamentários e financeiros necessários à realização de suas atividades, ou eventos que possam comprometer a própria execução orçamentária, como atrasos no cronograma de licitações."
+  },
+  {
+    "nome": "Risco de Ambiente Extremo",
+    "descricao": "São mudanças macroeconômicas, decisões políticas e prioridades ministeriais, bem como de andamento de convênio com parceiros externos."
+  }
+]
