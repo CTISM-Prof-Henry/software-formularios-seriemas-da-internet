@@ -8,6 +8,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
 
+        perfil_acesso = serializers.CharField(required=False, default='Gestor')
+
         fields = [
             'id',
             'username',
@@ -51,7 +53,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             matricula=validated_data.get('matricula'),
             unidade=validated_data.get('unidade'),
             centro_ativo=validated_data.get('centro_ativo'),
-            perfil_acesso=validated_data.get('perfil_acesso'),
+            perfil_acesso=validated_data.get('perfil_acesso', 'Gestor'),
             is_staff=True,
         )
 

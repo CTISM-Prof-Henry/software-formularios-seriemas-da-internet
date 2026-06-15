@@ -1,3 +1,5 @@
+from importlib.metadata import requires
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from unidade.models import Unidade
