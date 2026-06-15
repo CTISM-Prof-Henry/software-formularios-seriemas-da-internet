@@ -65,7 +65,7 @@ function Login() {
 
         } catch (erro) {
             console.log("Erro ao conectar com o servidor: ", erro);
-            setMensagemErro("Nao foi possivel conectar ao Banco!");
+            setMensagemErro(erro);
         } finally {
 
             setLoading(false)
@@ -81,7 +81,7 @@ function Login() {
                 <section>
 
                     <div className="title">
-                        <h1>Gestor de Risco </h1>
+                        <h1>Gestor de Risco</h1>
                         <p>Sistema de Gestão de Risco Institucional</p>
                     </div>
 
