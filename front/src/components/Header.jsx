@@ -61,7 +61,7 @@ function Header() {
 
                             {isAuditor && (
                                 <li>
-                                    <Link to="/adminstrador" onClick={() => setDropdownAberto(false)}>
+                                    <Link to="/administrador" onClick={() => setDropdownAberto(false)}>
                                         <FaUserShield/> Administração
                                     </Link>
                                 </li>

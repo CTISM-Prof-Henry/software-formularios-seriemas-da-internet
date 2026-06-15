@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import '../../style/DetalhesRisco.css';
-import {FiFileText, FiTarget, FiActivity, FiShield} from "react-icons/fi";
+import {FiFileText, FiTarget, FiActivity, FiShield, FiAlertOctagon} from "react-icons/fi";
 import {MdEdit} from 'react-icons/md';
+import {CiClock2, CiFlag1} from "react-icons/ci";
+import {TfiReload} from "react-icons/tfi";
 import {getCookie, useAuth} from "../../hooks/AuthContext.jsx";
 
 function DetalhesRisco() {
@@ -12,9 +14,12 @@ function DetalhesRisco() {
 
     const [risco, setRisco] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [statusRecomendacao, setStatusRecomendacao] = useState('Nao salvo')
     const [erro, setErro] = useState(null);
 
+
     const [nomeCategoria, setNomeCategoria] = useState('Carregando...');
+    const [desafio , setDesafio] = useState('Carregando...')
     const [nomeResponsavel, setNomeResponsavel] = useState('Carregando...');
     const [iniciaisResponsavel, setIniciaisResponsavel] = useState('--');
     const [nomeUnidade, setNomeUnidade] = useState('Carregando...');
@@ -46,20 +51,23 @@ function DetalhesRisco() {
     const salvarRecomendacao = async () => {
         if (!novoTexto.trim()) return;
 
-        const res = await fetch(`http://localhost:8000/api/risco/${id}/fazer-recomendacao/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // 'X-CSFRToken': csfrtoken
-            },
-            credentials: 'include',
-            body: JSON.stringify({texto: novoTexto})
-        });
-        if (res.ok) {
-            const novaRec = await res.json()
-
-            setNovoTexto('');
-            setRecomendacoes(prev => [novaRec, ...prev]);
+        try {
+            const res = await fetch(`http://localhost:8000/api/risco/${id}/fazer-recomendacao/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({texto: novoTexto})
+            });
+            if (res.ok) {
+                const novaRec = await res.json();
+                setNovoTexto('');
+                setStatusRecomendacao('Recomendação enviada!');
+                setRecomendacoes(prev => [novaRec, ...prev]);
+            }
+        } catch (erro) {
+            console.error("Erro na requisição da recomendação:", erro);
         }
     };
 
@@ -115,6 +123,17 @@ function DetalhesRisco() {
                     setNomeCategoria(dados.categoria_nome || dados.categoria || 'Não vinculado');
                 }
 
+                if (typeof dados.desafio === 'number') {
+                    fetch(`http://localhost:8000/api/desafio/${dados.desafio}/`, fetchConfig)
+                        .then(res => res.json())
+                        .then(des => setDesafio(
+                            des.nome || 'Categoria sem nome'
+                        ))
+                        .catch(() => setDesafio('Erro ao carregar'));
+                } else {
+                    setDesafio(dados.desafio ||  'Não vinculado');
+                }
+
                 const idResponsavel = dados.responsavel;
 
                 if (idResponsavel && typeof idResponsavel === 'number') {
@@ -153,11 +172,10 @@ function DetalhesRisco() {
         }
     }, [id]);
 
-    if (loading) return <div className="detalhes-container"><h2 style={{padding: '30px'}}>Carregando detalhes...</h2>
+    if (loading) return <div className="detalhes-container"><h2 className="state-message">Carregando detalhes...</h2>
     </div>;
-    if (erro) return <div className="detalhes-container"><h2 style={{padding: '30px', color: 'red'}}>Erro: {erro}</h2>
-    </div>;
-    if (!risco) return <div className="detalhes-container"><h2 style={{padding: '30px'}}>Risco não encontrado.</h2>
+    if (erro) return <div className="detalhes-container"><h2 className="state-message error">Erro: {erro}</h2></div>;
+    if (!risco) return <div className="detalhes-container"><h2 className="state-message">Risco não encontrado.</h2>
     </div>;
 
     const verificarPosicaoHeatmap = (linhaProb, colunaImp) => {
@@ -168,7 +186,6 @@ function DetalhesRisco() {
     const impactos = [1, 2, 3, 4, 5];
 
     const obterCorHeatmap = (prob, imp) => {
-
         const matrizCores = {
             5: ['c-light-red', 'c-light-red', 'c-dark-red', 'c-dark-red', 'c-dark-red'],
             4: ['c-yellow', 'c-light-red', 'c-light-red', 'c-dark-red', 'c-dark-red'],
@@ -176,7 +193,6 @@ function DetalhesRisco() {
             2: ['c-green', 'c-yellow', 'c-yellow', 'c-light-red', 'c-light-red'],
             1: ['c-green', 'c-green', 'c-yellow', 'c-yellow', 'c-light-red']
         };
-
         return matrizCores[prob][imp - 1];
     };
 
@@ -188,7 +204,6 @@ function DetalhesRisco() {
                     <span>&gt;</span>
                     <strong>Detalhes do Risco</strong>
                 </div>
-
             </div>
 
             <div className="header-card">
@@ -201,7 +216,6 @@ function DetalhesRisco() {
                             <span className={`badge ${risco.nivel >= 15 ? 'badge-critical' : 'badge-warning'}`}>
                                 <span className="dot"></span> {risco.status || 'Não avaliado'}
                             </span>
-
                             <span className={`badge badge-outline`}>
                                 Tratamento: {risco.status_tratamento || 'Não Iniciado'}
                             </span>
@@ -229,7 +243,7 @@ function DetalhesRisco() {
                         </div>
                         <div className="card-body">
 
-                            <div className="meta-row" style={{marginBottom: '20px'}}>
+                            <div className="meta-row">
                                 <div className="meta-box">
                                     <label>PROPRIETÁRIO DO RISCO</label>
                                     <div className="meta-content box-transparent">
@@ -241,7 +255,7 @@ function DetalhesRisco() {
                                     </div>
                                 </div>
                                 <div className="meta-box">
-                                    <label>CATEGORIA / ALINHAMENTO</label>
+                                    <label>CATEGORIA</label>
                                     <div className="meta-content box-blue">
                                         <FiTarget/>
                                         <span>{nomeCategoria || 'Não vinculado'}</span>
@@ -249,22 +263,29 @@ function DetalhesRisco() {
                                 </div>
                             </div>
 
-                            <div className="form-group" style={{marginBottom: '15px'}}>
+                            <div className="form-group">
                                 <label>PROCESSO ASSOCIADO</label>
-                                <p><strong>{risco.processo_associado || 'Não mapeado.'}</strong></p>
+                                <p className="text-large"><strong>{risco.processo_associado || 'Não mapeado.'}</strong>
+                                </p>
                             </div>
 
-                            <div className="form-group" style={{marginBottom: '15px'}}>
+
+                            <div className="form-group highlight-desafio box-blue">
+                                <label><FiAlertOctagon className="icon-inline "/> DESAFIO DO RISCO</label>
+                                <p>{desafio || 'Nenhum desafio ou dor principal foi documentado para este risco.'}</p>
+                            </div>
+
+                            <div className="form-group">
                                 <label>DESCRIÇÃO DO EVENTO</label>
                                 <p>{risco.descricao || 'Nenhuma descrição fornecida.'}</p>
                             </div>
 
                             <div className="meta-row">
-                                <div className="form-group" style={{flex: 1, paddingRight: '10px'}}>
+                                <div className="form-group">
                                     <label>CAUSAS (Origem)</label>
                                     <p className="highlight-box red-light">{risco.causas || 'Não detalhadas.'}</p>
                                 </div>
-                                <div className="form-group" style={{flex: 1, paddingLeft: '10px'}}>
+                                <div className="form-group">
                                     <label>CONSEQUÊNCIAS (Impacto Geral)</label>
                                     <p className="highlight-box orange-light">{risco.consequencias || 'Não detalhadas.'}</p>
                                 </div>
@@ -282,38 +303,39 @@ function DetalhesRisco() {
                             <span className="active-count">{risco.tipo_acao || 'Ação'}</span>
                         </div>
                         <div className="card-body">
-                            <div className="meta-row" style={{marginBottom: '15px'}}>
-                                <div className="form-group" style={{flex: 1}}>
+                            <div className="meta-row">
+                                <div className="form-group">
                                     <label>AÇÃO PRINCIPAL (What)</label>
-                                    <p><strong>{risco.acao_tratamento || 'Nenhuma ação definida.'}</strong></p>
+                                    <p className="text-large">
+                                        <strong>{risco.acao_tratamento || 'Nenhuma ação definida.'}</strong></p>
                                 </div>
-                                <div className="form-group" style={{width: '150px'}}>
+                                <div className="form-group">
                                     <label>RESPOSTA</label>
                                     <span className="status-text blue">{risco.resposta_risco || 'Em análise'}</span>
                                 </div>
                             </div>
 
-                            <div className="meta-row" style={{marginBottom: '15px'}}>
-                                <div className="form-group" style={{flex: 1}}>
+                            <div className="meta-row">
+                                <div className="form-group">
                                     <label>JUSTIFICATIVA (Why)</label>
                                     <p className="text-muted">{risco.justificativa_acao || '-'}</p>
                                 </div>
-                                <div className="form-group" style={{flex: 1}}>
+                                <div className="form-group">
                                     <label>COMO IMPLEMENTAR (How)</label>
                                     <p className="text-muted">{risco.como_implementar || '-'}</p>
                                 </div>
                             </div>
 
-                            <div className="info-grid-3">
-                                <div>
+                            <div className="info-grid-3 border-top-light pt-15">
+                                <div className="form-group">
                                     <label>RESPONSÁVEL (Who)</label>
                                     <p><strong>{risco.responsavel_tratamento || '-'}</strong></p>
                                 </div>
-                                <div>
+                                <div className="form-group">
                                     <label>PRAZO (When)</label>
                                     <p><strong>{risco.prazo_implementacao || '-'}</strong></p>
                                 </div>
-                                <div>
+                                <div className="form-group">
                                     <label>RECURSOS (How Much)</label>
                                     <p><strong>{risco.recursos_necessarios || '-'}</strong></p>
                                 </div>
@@ -329,27 +351,27 @@ function DetalhesRisco() {
                         </div>
                         <div className="card-body">
                             <div className="meta-row">
-                                <div className="form-group" style={{flex: 1}}>
+                                <div className="form-group">
                                     <label>INDICADORES DE SUCESSO</label>
                                     <p>{risco.indicadores_monitoramento || 'Nenhum indicador definido.'}</p>
                                 </div>
-                                <div className="form-group" style={{flex: 1}}>
+                                <div className="form-group">
                                     <label>RESULTADOS ALCANÇADOS ATÉ AGORA</label>
                                     <p className="highlight-box green-light">{risco.resultados_alcancados || 'Aguardando avaliação de resultados.'}</p>
                                 </div>
                             </div>
-                            <div className="info-grid-3" style={{marginTop: '15px'}}>
-                                <div>
+                            <div className="info-grid-3 border-top-light pt-15">
+                                <div className="form-group">
                                     <label>PRÓXIMA AVALIAÇÃO</label>
                                     <p><strong>{risco.data_proxima_avaliacao || 'Não agendada'}</strong></p>
                                 </div>
-                                <div>
+                                <div className="form-group">
                                     <label>PROBABILIDADE RESIDUAL ESPERADA</label>
                                     <p>
                                         <strong>{risco.probabilidade_residual ? `${risco.probabilidade_residual} / 5` : '-'}</strong>
                                     </p>
                                 </div>
-                                <div>
+                                <div className="form-group">
                                     <label>IMPACTO RESIDUAL ESPERADO</label>
                                     <p><strong>{risco.impacto_residual ? `${risco.impacto_residual} / 5` : '-'}</strong>
                                     </p>
@@ -370,7 +392,7 @@ function DetalhesRisco() {
                                 {recomendacoes.map((rec) => (
                                     <div key={rec.id} className="item-recomendacao">
                                         <div className="item-recomendacao-header">
-                                            <strong>Auditor: {rec.auditor_nome || 'Identificado'}</strong>
+                                            <strong>Auditor: {rec.auditor || 'Não Identificado'}</strong>
                                             <span>{new Date(rec.data_criacao).toLocaleDateString('pt-BR')}</span>
                                         </div>
                                         <p className="item-recomendacao-texto">
@@ -386,27 +408,21 @@ function DetalhesRisco() {
 
                 <div className="right-column">
 
-
                     <div className="card">
                         <div className="card-header">
                             <h2>Avaliação Inicial (Etapa 2)</h2>
                         </div>
                         <div className="card-body">
 
-                            <div style={{marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #eee'}}>
-                                <label style={{fontSize: '12px', color: '#64748b', fontWeight: 'bold'}}>CONTROLES
-                                    EXISTENTES HOJE</label>
-                                <p style={{
-                                    fontSize: '14px',
-                                    margin: '5px 0'
-                                }}>{risco.controles_existentes || 'Nenhum controle mapeado.'}</p>
-                                <span className="badge badge-outline"
-                                      style={{marginTop: '5px', display: 'inline-block'}}>
+                            <div className="form-group border-bottom-light pb-15 mb-20">
+                                <label>CONTROLES EXISTENTES HOJE</label>
+                                <p className="text-large">{risco.controles_existentes || 'Nenhum controle mapeado.'}</p>
+                                <span className="badge badge-outline mt-5 d-inline-block">
                                     Efetividade: {risco.efetividade_controles || 'Não avaliada'}
                                 </span>
                             </div>
 
-                            <div className="text-center">
+                            <div className="text-center mb-20">
                                 <span className="axis-label-top">PROBABILIDADE</span>
                                 <div className="heatmap-container">
                                     <span className="axis-label-left">IMPACTO</span>
@@ -425,7 +441,6 @@ function DetalhesRisco() {
                                             ))
                                         )}
                                     </div>
-
                                 </div>
                             </div>
 
@@ -451,10 +466,7 @@ function DetalhesRisco() {
                     <div className="card">
                         <div className="card-header">
                             <div className="title-with-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
+                                <CiClock2/>
                                 <h2>Histórico</h2>
                             </div>
                         </div>
@@ -465,20 +477,9 @@ function DetalhesRisco() {
                                     <div className="tl-item" key={versao.id_versao}>
                                         <div className="tl-icon gray-icon">
                                             {versao.acao === 'Criado' ? (
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                     strokeWidth="2">
-                                                    <path
-                                                        d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                                                    <line x1="4" y1="22" x2="4" y2="15"></line>
-                                                </svg>
+                                                <CiFlag1/>
                                             ) : (
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                     strokeWidth="2">
-                                                    <polyline points="1 4 1 10 7 10"></polyline>
-                                                    <polyline points="23 20 23 14 17 14"></polyline>
-                                                    <path
-                                                        d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-                                                </svg>
+                                                <TfiReload/>
                                             )}
                                         </div>
                                         <div className="tl-content">
@@ -493,13 +494,11 @@ function DetalhesRisco() {
                                     </div>
                                 ))}
                             </div>
-                            <button className="btn-link">Ver Histórico Completo</button>
                         </div>
 
                     </div>
 
                     <div>
-
                         {isAuditor && (
                             <div className="card-auditoria">
                                 <h3>Área do Auditor (Nova Recomendação)</h3>
@@ -509,11 +508,10 @@ function DetalhesRisco() {
                                     placeholder="Insira aqui a recomendação técnica..."
                                 />
                                 <button onClick={salvarRecomendacao} className="btn-confirm">
-                                    Enviar Recomendação
+                                    {statusRecomendacao === 'Nao salvo' ? 'Enviar Recomendação' : statusRecomendacao}
                                 </button>
                             </div>
                         )}
-
                     </div>
                 </div>
             </div>

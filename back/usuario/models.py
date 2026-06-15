@@ -14,7 +14,8 @@ class Centro(models.Model):
 class Usuario(AbstractUser):
 
     matricula = models.CharField(max_length=20, unique=True)
-    perfil_acesso = models.CharField(max_length=50, blank=True, null=True)
+    PERFIS = [('Admin', 'Administrador'), ('Gestor', 'Gestor de Riscos'), ('Auditor', 'Auditor')]
+    perfil_acesso = models.CharField(max_length=20, choices=PERFIS, default='Gestor')
 
     unidade = models.ForeignKey(Unidade, on_delete=models.SET_NULL, null=True, blank=True)
     centro_ativo = models.ForeignKey(Centro, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarios_ativos')

@@ -31,6 +31,11 @@ class RiscoSerializer(serializers.ModelSerializer):
         return risco
 
 class RecomendacaoAuditoriaSerializer(serializers.ModelSerializer):
+    auditor = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='first_name'  
+    )
+
     class Meta:
         model = RecomendacaoAuditoria
 
