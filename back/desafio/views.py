@@ -19,7 +19,26 @@ def get_desafios(request):
     try:
 
         serializer = DesafioSerializer(desafios, many=True)
-       
+
+        return Response(serializer.data, status=HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+@csrf_exempt
+@api_view(['GET'])
+@authentication_classes([CsrfExemptSessionAuthentication])
+@permission_classes([IsAuthenticated])
+def get_desafio_by_id(request, pk):
+
+    if pk is None:
+        return Response({"erro": "Nenhum id recebido"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+    try:
+        desafio = Desafio.objects.get(id=pk)
+
+        serializer = DesafioSerializer(desafio)
+
         return Response(serializer.data, status=HTTP_200_OK)
 
     except Exception as e:

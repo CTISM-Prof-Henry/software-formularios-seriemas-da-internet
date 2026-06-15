@@ -33,7 +33,7 @@ function ExportacaoDados() {
         },
         {
             id: 'RSK-089',
-            ranking: 'Atraso no repasse de verbas ministeriais...',
+            descricao: 'Atraso no repasse de verbas ministeriais...',
             categoria: 'Financeiro',
             criticidade: 'Alto',
             status: 'Mitigado'
@@ -90,9 +90,6 @@ function ExportacaoDados() {
             const response = await fetch(`http://localhost:8000/api/riscos/exportar/csv/?${params.toString()}`, {
                 method: 'GET',
                 credentials: 'include',
-                // headers: {
-                //     'Accept': 'text/csv'
-                // }
             });
 
             if (!response.ok) {
@@ -158,7 +155,7 @@ function ExportacaoDados() {
         <div className="export-page-container">
             <div className="export-header">
                 <h1>Exportação de Dados</h1>
-                <p>Configure os filtros e colunas para gerar um relatório em formato CSV.</p>
+                <p>Configure os filtros e colunas para gerar um relatório em formato CSV ou PDF.</p>
             </div>
 
             <div className="export-grid-layout">

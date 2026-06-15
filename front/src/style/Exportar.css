@@ -1,3 +1,7 @@
+* {
+    transition: background-color 0.3s ease-in-out;
+}
+
 
 .export-page-container {
     padding: 30px;
@@ -15,14 +19,14 @@
 
 .export-header h1 {
     font-size: 1.8rem;
-    color: #0f172a;
+    color: var(--text-darker);
     font-weight: 700;
     margin: 0 0 6px 0;
 }
 
 .export-header p {
     font-size: 0.95rem;
-    color: #64748b;
+    color: var(--text-h);
     margin: 0;
 }
 
@@ -41,8 +45,8 @@
 
 
 .export-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--white);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 20px;
@@ -62,7 +66,7 @@
 
 .card-title-with-icon h2 {
     font-size: 1.1rem;
-    color: #1e293b;
+    color: var(--text-h);
     font-weight: 600;
     margin: 0;
 }
@@ -90,16 +94,16 @@
 .filter-group label {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #475569;
+    color: var(--text-darker);
 }
 
 .filter-group select {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
-    background-color: #ffffff;
-    color: #1e293b;
+    background-color: var(--white);
+    color: var(--text-darker);
     font-size: 0.9rem;
     outline: none;
 }
@@ -111,19 +115,22 @@
     gap: 10px;
 }
 
+.checkbox-badge-grid label {
+    color: var(--text-darker);
+}
+
 .checkbox-badge-label {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     padding: 10px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    background-color: #f8fafc;
+    background-color: var(--white);
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 500;
-    color: #64748b;
     transition: all 0.2s ease;
 }
 
@@ -134,9 +141,9 @@
 }
 
 .checkbox-badge-label.active {
-    background-color: #eff6ff;
-    border-color: #bfdbfe;
-    color: #1e40af;
+    background-color: var(--white);
+    border-color: #2563eb;
+    color: #5170c6;
     font-weight: 600;
 }
 
@@ -223,7 +230,7 @@
     align-items: center;
     gap: 10px;
     font-size: 0.9rem;
-    color: #334155;
+    color: var(--text-darker);
     cursor: pointer;
 }
 
@@ -234,11 +241,11 @@
     cursor: pointer;
 }
 
-/* Tabela de Amostra */
+
 .table-responsive {
     width: 100%;
     overflow-x: auto;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
 }
 
@@ -247,22 +254,22 @@
     border-collapse: collapse;
     text-align: left;
     font-size: 0.85rem;
-    background: #ffffff;
+    background: var(--white);
 }
 
 .export-preview-table th {
-    background-color: #f1f5f9;
-    color: #475569;
+    background-color: var(--white);
+    color: var(--text-darker);
     font-weight: 600;
     padding: 12px 16px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     letter-spacing: 0.5px;
 }
 
 .export-preview-table td {
     padding: 14px 16px;
-    border-bottom: 1px solid #f1f5f9;
-    color: #334155;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-darker);
 }
 
 .export-preview-table tr:last-child td {
@@ -299,6 +306,6 @@
 .table-footer-notes {
     margin-top: 14px;
     font-size: 0.8rem;
-    color: #64748b;
+    color: var(--text-muted);
     text-align: center;
 }

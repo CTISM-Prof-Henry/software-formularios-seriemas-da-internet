@@ -1,3 +1,8 @@
+* {
+    transition: background-color 0.3s ease-in-out;
+}
+
+
 .cadastro-container {
     padding: 30px 40px;
     background-color: var(--bg-main);

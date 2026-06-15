@@ -101,6 +101,7 @@ def get_usuario(request, uid):
     return Response({"error": "Usuario nao existe!"}, status=404)
 
 
+
 @csrf_exempt
 @api_view(['GET'])
 @authentication_classes([CsrfExemptSessionAuthentication])
@@ -117,6 +118,46 @@ def get_usuario_by_id(request, pk):
     serializer = UsuarioSerializer(user, many=False)
     return Response(serializer.data)
 
+
+@api_view(['PATCH'])
+@permission_classes([IsAuditorPermission])
+def alterar_permissao(request, pk):
+    try:
+
+        user = Usuario.objects.get(id=pk)
+
+        novo_perfil = request.data.get('perfil_acesso')
+
+        perfis_validos = [par[0] for par in Usuario.PERFIS]
+
+        if novo_perfil not in perfis_validos:
+            return Response(
+                {"erro": f"Perfil inválido. Escolha entre: {', '.join(perfis_validos)}."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.perfil_acesso = novo_perfil
+        user.save()
+
+        return Response(
+            {
+                "mensagem": f"Permissão de {user.first_name} atualizada para {novo_perfil} com sucesso!",
+                "perfil_acesso": user.perfil_acesso
+            },
+            status=status.HTTP_200_OK
+        )
+
+    except Usuario.DoesNotExist:
+        return Response(
+            {"erro": "Utilizador não encontrado."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    except Exception as e:
+        return Response(
+            {"erro": f"Erro interno no servidor: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @csrf_exempt

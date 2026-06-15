@@ -339,9 +339,12 @@ def listar_recomendacoes(request, pk):
 
     try:
 
-        recomendacoes = RecomendacaoAuditoria.objects.filter(risco_id=pk).order_by('-data_criacao')
+        recomendacoes = (RecomendacaoAuditoria.objects.filter(risco_id=pk).order_by('-data_criacao')
+                         .select_related('auditor'))
 
         serializer = RecomendacaoAuditoriaSerializer(recomendacoes, many=True)
+
+
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
