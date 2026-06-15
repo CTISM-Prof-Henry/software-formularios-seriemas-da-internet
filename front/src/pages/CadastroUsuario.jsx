@@ -19,6 +19,7 @@ function CadastroUsuario() {
     const [ sugestoesUnidades, setSugestoesUnidades ] = useState([])
     const [ mostrarDropDown, setMostrarDropDown ] = useState(false)
     const [ unidade, setUnidade ] = useState()
+    const [ erroMsg, setErroMsg ] = useState('')
 
     async function handleSearchUnidade(e) {
         const valorDigitado = e.target.value;
@@ -89,6 +90,7 @@ function CadastroUsuario() {
                   } else {
 
                       const errorData = await response.json().catch(() => null) || await response.text();
+                      setErroMsg("Erro interno de servidor")
                       console.error("Erro retornado pelo backend:", errorData);
                   }
 
@@ -173,17 +175,9 @@ function CadastroUsuario() {
 
                             </div>
 
-                            <div className="input-group">
-                                <label>Perfil de acesso</label>
-                                <select name="perfil_acesso" className="select" onChange={handleChange} value={form.perfil_acesso} required>
-
-                                    <option value="" disabled>Selecione um perfil</option>
-                                    <option value="Gestor de Risco">Gestor de Risco</option>
-                                    <option value="Colaborador">Colaborador</option>
-                                    <option value="Auditor">Auditor</option>
-
-                                </select>
-                            </div>
+                            {erroMsg && (
+                                <span style={{color: 'red'}}>{erroMsg}</span>
+                            )}
 
                             <div className="post-btn">
                                 <button type="submit">Solicitar acesso</button>

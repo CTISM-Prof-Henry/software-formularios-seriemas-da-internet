@@ -1,12 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from unidade.models import Unidade
+
+
+class Centro(models.Model):
+    nome = models.CharField(max_length=255)
+    sigla = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.sigla
 
 
 class Usuario(AbstractUser):
 
-    matricula = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    setor = models.ForeignKey('unidade.Unidade', on_delete=models.SET_NULL, null=True, blank=True)
-    perfil_acesso = models.CharField(max_length=20, null=True, blank=True)
+    matricula = models.CharField(max_length=20, unique=True)
+    perfil_acesso = models.CharField(max_length=50, blank=True, null=True)
 
-    def __str__(self):
-        return f"{self.username} - {self.matricula}"
+    unidade = models.ForeignKey(Unidade, on_delete=models.SET_NULL, null=True, blank=True)
+    centro_ativo = models.ForeignKey(Centro, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarios_ativos')
+    centros_permitidos = models.ManyToManyField(Centro, related_name='usuarios_permitidos',blank=True)

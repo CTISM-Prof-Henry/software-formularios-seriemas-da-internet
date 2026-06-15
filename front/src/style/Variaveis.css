@@ -1,0 +1,124 @@
+:root {
+    /*
+    CORES DE FUNDO
+   */
+    --bg-main: #f8fafc;
+    --bg-page: #f8fafc;
+    --bg-form: #D9D9D9;
+    --code-bg: #f4f3ec;
+    --white: #ffffff;
+    --light-gray: #f1f5f9;
+
+    /*
+    CORES DE TEXTO
+  */
+    --text-darker: #0f172a;
+    --text-dark: #1e293b;
+    --text-main: #1e293b;
+    --text-h: #4A5359;
+    --text-muted: #64748b;
+    --text-light: #8a94a6;
+
+    /*
+     CORES DA PALETA
+     */
+    --brand-dark: #0f172a;
+    --brand-blue: #002244;
+    --dark-blue: #15304D;
+    --light-blue: #1A3A5C;
+
+    --brand-light-blue: #026ada;
+    --brand-bluer: #026ada;
+    --brand-blue-hover: #0257b3;
+
+    --focus-blue: #3b82f6;
+    --lighter-blue: #e0f2fe;
+    --light-blue-bg: #e0f2fe;
+
+    /*
+      CORES SEMÂNTICAS
+      */
+    --success-color: #10b981;
+    --brand-red: #dc2626;
+    --light-red: #fee2e2;
+    --inactive-color: #94a3b8;
+
+    --accent: #aa3bff;
+    --accent-bg: rgba(170, 59, 255, 0.1);
+    --accent-border: rgba(170, 59, 255, 0.5);
+    --social-bg: rgba(244, 243, 236, 0.5);
+
+
+    --border-color: #e2e8f0;
+    --border-light: #e2e8f0;
+    --badge-bg: #e2e8f0;
+    --border: #e5e4e7;
+
+
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+
+    --lucida: Lucida;
+    --inter: Inter;
+    --mono: ui-monospace, Consolas, monospace;
+
+  --bg-card: #ffffff;
+  --brand-blue-light: #eff6ff;
+
+  --red-critical: #991b1b;
+  --red-bg: #fee2e2;
+  --red-text: #dc2626;
+
+  --hm-green: #d1fae5;
+  --hm-yellow: #fef08a;
+  --hm-light-red: #fecaca;
+  --hm-dark-red: #991b1b;
+}
+
+/*
+   TEMA ESCURO
+ */
+[data-theme="dark"] {
+
+    --bg-main: #0f172a;
+    --bg-page: #0f172a;
+    --bg-form: #1e293b;
+    --code-bg: #1e293b;
+    --white: #1e293b;
+    --light-gray: #334155;
+
+
+    --text-darker: #f8fafc;
+    --text-dark: #f1f5f9;
+    --text-main: #f1f5f9;
+    --text-h: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-light: #cbd5e1;
+
+
+    --border-color: #334155;
+    --border-light: #334155;
+    --badge-bg: #334155;
+    --border: #334155;
+
+
+    --lighter-blue: #e0f2fe;
+    --light-blue-bg: #1e3a8a;
+    --light-red: rgb(126 56 56 / 0.34);
+}
+
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+@media (max-width: 1024px) {
+    :root {
+        font-size: 16px;
+    }
+}

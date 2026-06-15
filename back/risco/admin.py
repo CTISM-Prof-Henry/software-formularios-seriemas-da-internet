@@ -1,6 +1,6 @@
 from django.contrib import admin
 from risco.models import Risco
-from risco.models import UsuarioRisco
+from risco.models import RecomendacaoAuditoria
 
 
 class RiscoAdmin(admin.ModelAdmin):
@@ -9,18 +9,15 @@ class RiscoAdmin(admin.ModelAdmin):
 
         fields = '__all__'
 
-
-class UsuarioRiscoAdmin(admin.ModelAdmin):
+class RecondamendacoaAuditoriaAdmin(admin.ModelAdmin):
     class Meta:
-        model = UsuarioRisco
+        model: RecomendacaoAuditoria
 
         fields = '__all__'
 
-
-
-
+admin.site.register(RecomendacaoAuditoria, RecondamendacoaAuditoriaAdmin)
 admin.site.register(Risco, RiscoAdmin)
-admin.site.register(UsuarioRisco, UsuarioRiscoAdmin)
+
 
 
 

@@ -8,96 +8,173 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.tokens import default_token_generator
+from django.db import transaction
+from django.contrib.auth import login
+from django.db.models import Q
+from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 from drf_spectacular.utils import extend_schema
-from .serializer import UsuarioSerializer, LoginSerializer
-from .models import Usuario
+from .authentications import CsrfExemptSessionAuthentication, IsAuditorPermission
+from .serializer import UsuarioSerializer
+from .models import Usuario, Centro
+from unidade.models import Unidade
+
 
 @api_view(['GET'])
 def listar_usuarios(request):
 
-    usuarios = Usuario.objects.all()
+    usuarios_validos = Usuario.objects.select_related('unidade').exclude(
+        Q(first_name__isnull=True) | Q(first_name__exact='') |
+        Q(matricula__isnull=True) | Q(matricula__exact='') |
+        Q(unidade__isnull=True)
+    ).order_by('-id')
 
-    serializer = UsuarioSerializer(usuarios, many=True)
+    if request.GET.get('count-users'):
+        count = usuarios_validos.count()
+        return Response({"count": count}, status=status.HTTP_200_OK)
+
+    query = request.GET.get('q', '')
+    limit = request.GET.get('limit')
+
+    if query:
+        usuarios_validos = usuarios_validos.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(unidade__nome_unidade__icontains=query)
+        )
+
+    if limit:
+        try:
+            usuarios_validos = usuarios_validos[:int(limit)]
+        except ValueError:
+            pass
+
+    serializer = UsuarioSerializer(usuarios_validos, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def buscar_usuarios_by_name(request):
+
+    query = request.GET.get('q', '')
+
+    if len(query) < 2:
+        return Response([])
+
+    usuarios = Usuario.objects.filter(first_name__icontains=query)[:10]
+
+    resultados = []
+    for u in usuarios:
+        resultados.append({
+            "id": u.id,
+            "first_name": u.first_name,
+            "last_name": u.last_name,
+            "matricula": u.matricula
+        })
+
+    return Response(resultados)
+
 
 @csrf_exempt
 @api_view(['GET'])
+@authentication_classes([CsrfExemptSessionAuthentication])
+@permission_classes([IsAuthenticated])
 def get_usuario(request, uid):
 
     try:
         user_id = force_str(urlsafe_base64_decode(uid))
 
-        user = Usuario.objects.get(pk=user_id)
+        user = Usuario.objects.select_related('unidade').get(pk=user_id)
 
     except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
         user = None
 
     if user:
-        serializer = UsuarioSerializer(user, many=False)
 
+        serializer = UsuarioSerializer(user, many=False)
         return Response(serializer.data)
 
     return Response({"error": "Usuario nao existe!"}, status=404)
 
-@extend_schema(
-    summary="Login de usuario",
-    description="Faz login de usuario",
-    request=LoginSerializer,
-    responses={200: UsuarioSerializer(many=True)}
-)
+
+@csrf_exempt
+@api_view(['GET'])
+@authentication_classes([CsrfExemptSessionAuthentication])
+@permission_classes([IsAuthenticated])
+def get_usuario_by_id(request, pk):
+
+    try:
+        user = Usuario.objects.select_related('unidade').get(id=pk)
+
+    except Usuario.DoesNotExist:
+        return Response({"error": "Usuário não existe!"}, status=404)
+
+
+    serializer = UsuarioSerializer(user, many=False)
+    return Response(serializer.data)
+
+
+
 @csrf_exempt
 @api_view(['POST'])
+@authentication_classes([CsrfExemptSessionAuthentication])
+@permission_classes([AllowAny])
 def fazer_login(request):
 
-    if  request.method == 'POST':
+    try:
 
-        try:
+        dados = json.loads(request.body)
+        matricula = dados.get('matricula')
+        senha = dados.get('senha')
 
-            dados = json.loads(request.body)
-            matricula = dados.get('matricula')
-            senha = dados.get('senha')
+        print("\n--- TENTATIVA DE LOGIN ---")
+        print(f"Matrícula recebida: '{matricula}'")
 
-            print("\n--- TENTATIVA DE LOGIN ---")
-            print(f"Matrícula recebida: '{matricula}'")
-
-            usuario = Usuario.objects.filter(matricula=matricula).first()
+        usuario = Usuario.objects.filter(matricula=matricula).first()
 
 
-            if usuario is not None:
-                print(f"Usuário encontrado no BD: {usuario}")
+        if usuario is not None:
+            print(f"Usuário encontrado no BD: {usuario}")
 
-                senha_valida = usuario.check_password(senha)
+            senha_valida = usuario.check_password(senha)
 
-                if senha_valida:
-                    print("Senha Valida por checkpassword!")
+            if senha_valida:
+                print("Senha Valida por checkpassword!")
 
-                    uid = urlsafe_base64_encode(force_bytes(usuario.pk))
-                    usuario.last_login = timezone.now()
+                login(request, usuario, backend='django.contrib.auth.backends.ModelBackend')
 
+                uid = urlsafe_base64_encode(force_bytes(usuario.pk))
 
-                    return JsonResponse({
-                        'mensagem': 'Login realizado com sucesso',
-                        'usuario_id': usuario.id,
-                        'usuario_nome': usuario.first_name,
-                        'uid': uid
-                    }, status=200)
+                usuario.last_login = timezone.now()
+                usuario.save(update_fields=['last_login'])
 
-
-                return JsonResponse({'erro': 'Senha incorreta'}, status=401)
-
-            return JsonResponse({'erro': 'Usuário não encontrado'}, status=404)
+                return JsonResponse({
+                    'mensagem': 'Login realizado com sucesso',
+                    'usuario_id': usuario.id,
+                    'usuario_nome': usuario.first_name,
+                    'uid': uid
+                }, status=200)
 
 
-        except Exception as e:
+            return JsonResponse({'erro': 'Senha incorreta'}, status=401)
 
-            print(f"ERRO FATAL DE SERVIDOR: {e}")
-            return JsonResponse({
-                'erro': 'Falha do servidor'
-            }, status=500)
+        return JsonResponse({'erro': 'Usuário não encontrado'}, status=404)
 
-    return JsonResponse({'erro': 'Método não permitido'}, status=405)
+
+    except Exception as e:
+
+        print(f"ERRO FATAL DE SERVIDOR: {e}")
+        return JsonResponse({
+            'erro': 'Falha do servidor'
+        }, status=500)
+
+
+
+
 
 @extend_schema(
     summary="Cadastra um usuario",
@@ -108,28 +185,52 @@ def fazer_login(request):
 @api_view(['POST'])
 def cadastrar_usuario(request):
 
+    dados = request.data
+    setor_id = dados.get('setor')
 
-    if request.method == 'POST':
+    print(f"DEBUG: O React enviou o setor como: {setor_id} (Tipo: {type(setor_id)})")
+    if not setor_id:
+        return Response({"erro": "É obrigatório selecionar um Centro/Unidade."}, status=status.HTTP_400_BAD_REQUEST)
 
-        try :
+    try:
 
-            dados = json.loads(request.body)
-            serializer = UsuarioSerializer(data=dados)
-
-            if serializer.is_valid():
-                serializer.save()
-                print(f"Dados: {serializer.data}")
-
-
-                return JsonResponse({"messagem": "Usuario cadastrado com sucesso!"}, status=201)
+        try:
+            unidade_escolhida = Unidade.objects.get(id=setor_id)
+        except Unidade.DoesNotExist:
+            return Response({"erro": "O Centro selecionado não existe."}, status=status.HTTP_404_NOT_FOUND)
 
 
-            return JsonResponse({"erro": "Dados invalidos", "detalhes": serializer.errors}, status=400)
+        if not unidade_escolhida.sigla_centro:
+            return Response({"erro": "Este setor não está vínculado a nenhum Centro institucional."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        except Exception as e:
-            return JsonResponse({"erro": "Falha do servidor", "detalhes": str(e)}, status=500)
 
-    return JsonResponse({'erro': 'Método não permitido'}, status=405)
+        centro_da_unidade, create = Centro.objects.get_or_create(
+            sigla=unidade_escolhida.sigla_centro,
+            defaults={'nome': getattr(unidade_escolhida, 'nome_centro', unidade_escolhida.sigla_centro)}
+        )
+
+        serializer = UsuarioSerializer(data=dados)
+
+        if serializer.is_valid():
+
+            with transaction.atomic():
+
+                usuario = serializer.save(
+                    unidade=unidade_escolhida,
+                    centro_ativo=centro_da_unidade
+                )
+
+                usuario.centros_permitidos.add(centro_da_unidade)
+
+            print(f"Dados: {serializer.data}")
+            return Response({"mensagem": "Usuário cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
+
+        return Response({"erro": "Dados inválidos", "detalhes": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"erro": "Falha do servidor", "detalhes": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @csrf_exempt
 @api_view(['POST'])
@@ -137,7 +238,6 @@ def reset_senha(request):
 
     email = request.data.get('email')
     user = Usuario.objects.filter(email=email).first()
-
 
     try:
 
@@ -170,6 +270,7 @@ def reset_senha(request):
 
 @csrf_exempt
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAuditorPermission])
 def confirmar_reset_senha(request):
 
     uid = request.data.get('uid')

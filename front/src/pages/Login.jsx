@@ -1,27 +1,48 @@
 import {useState} from 'react'
 import '../style/Login.css'
-import {useNavigate, Link} from 'react-router-dom'
+import '../style/Variaveis.css'
+import { Navigate, Link, useNavigate} from 'react-router-dom'
+import {useAuth} from "../hooks/AuthContext.jsx";
 
 
 function Login() {
+    const navigate = useNavigate()
 
     const [matricula, setMatricula] = useState('')
     const [senha, setSenha] = useState('')
     const [mensagemErro, setMensagemErro] = useState('')
+    const [loading, setLoading] = useState(false)
+    const { usuario, carregando, fazerLogin} = useAuth()
 
-    const navigate = useNavigate()
+    if (carregando) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <p>Verificando sessão...</p>
+            </div>
+        );
+    }
+
+    if (usuario) {
+        return <Navigate to="/painel" replace />;
+    }
 
     const buscaUsuario = async (evento) => {
         evento.preventDefault()
 
+        if (loading) return;
+
+        setLoading(true)
+
         try {
+            await fazerLogin(matricula, senha)
 
             const resposta = await
-                fetch("http://127.0.0.1:8000/api/login/", {
+                fetch("http://localhost:8000/api/login/", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         matricula: matricula,
                         senha: senha
@@ -35,7 +56,6 @@ function Login() {
 
                 setMensagemErro('');
 
-                localStorage.setItem('tokenAcesso', dados.tokenAcesso)
                 localStorage.setItem('uid', dados.uid)
 
                 navigate(`/painel`)
@@ -46,6 +66,9 @@ function Login() {
         } catch (erro) {
             console.log("Erro ao conectar com o servidor: ", erro);
             setMensagemErro("Nao foi possivel conectar ao Banco!");
+        } finally {
+
+            setLoading(false)
         }
     }
 
@@ -72,13 +95,18 @@ function Login() {
 
                             <div className="input-group">
                                 <label>Senha</label>
-                                <input type="password" value={senha} placeholder="*******" onChange={(e) => setSenha(e.target.value)} required/>
+                                <input type="password" value={senha} placeholder="*******"
+                                       onChange={(e) => setSenha(e.target.value)}
+                                       required
+                                />
                             </div>
 
-                            {mensagemErro && <p style={{color: 'red'}}>{mensagemErro}</p>}
+                            {mensagemErro && <p className="erro-msg">{mensagemErro}</p>}
 
                             <div className="post-btn">
-                                <button type="submit">Entrar</button>
+                                <button type="submit" disabled={loading} style={{ opacity: loading ? 0.7 : 1 }}>
+                                    {loading ? 'Entrando...' : 'Entrar'}
+                                </button>
                             </div>
                         </form>
 
