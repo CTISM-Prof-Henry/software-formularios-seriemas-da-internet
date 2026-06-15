@@ -443,6 +443,7 @@ def exportar_riscos_csv(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def exportar_riscos_pdf(request):
+    print("Criando PDF...")
 
     periodo = request.GET.get('periodo', '30')
     categoria_filtro = request.GET.get('categoria', 'todas')
