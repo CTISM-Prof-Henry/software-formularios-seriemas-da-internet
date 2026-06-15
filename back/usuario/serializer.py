@@ -8,7 +8,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
 
-        perfil_acesso = serializers.CharField(required=False, default='Gestor')
+        perfil_acesso = serializers.CharField(required=False, allow_blank=True, allow_null=True ,default='Gestor')
 
         fields = [
             'id',
@@ -44,6 +44,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         centros_permitidos = validated_data.pop('centros_permitidos', [])
 
+        perfil = validated_data.get('perfil_acesso')
+        if not perfil or str(perfil).strip() == "":
+            perfil = 'Gestor'
 
         user = Usuario(
             username=username_limpo,
@@ -53,7 +56,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             matricula=validated_data.get('matricula'),
             unidade=validated_data.get('unidade'),
             centro_ativo=validated_data.get('centro_ativo'),
-            perfil_acesso=validated_data.get('perfil_acesso', 'Gestor'),
+            perfil_acesso=perfil,
             is_staff=True,
         )
 
