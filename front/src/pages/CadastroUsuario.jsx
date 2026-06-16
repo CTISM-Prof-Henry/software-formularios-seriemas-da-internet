@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import {useState, useEffect} from 'react'
+import {useNavigate, Link} from 'react-router-dom'
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 function CadastroUsuario() {
@@ -14,17 +15,18 @@ function CadastroUsuario() {
         matricula: "",
         setor: "",
         perfil_acesso: ""
-      });
+    });
 
-    const [ sugestoesUnidades, setSugestoesUnidades ] = useState([])
-    const [ mostrarDropDown, setMostrarDropDown ] = useState(false)
-    const [ unidade, setUnidade ] = useState()
-    const [ erroMsg, setErroMsg ] = useState('')
+    const [sugestoesUnidades, setSugestoesUnidades] = useState([])
+    const [mostrarDropDown, setMostrarDropDown] = useState(false)
+    const [unidade, setUnidade] = useState()
+    const [erroMsg, setErroMsg] = useState('')
+    const [mostrarSenha, setMostrarSenha] = useState(false);
 
     async function handleSearchUnidade(e) {
         const valorDigitado = e.target.value;
 
-        setForm({ ...form, setor: valorDigitado });
+        setForm({...form, setor: valorDigitado});
 
         if (valorDigitado.length >= 2) {
             try {
@@ -46,64 +48,64 @@ function CadastroUsuario() {
         }
     }
 
-      function handleChange(e) {
+    function handleChange(e) {
         setForm({
-          ...form,
-          [e.target.name]: e.target.value
+            ...form,
+            [e.target.name]: e.target.value
         });
-      }
+    }
 
-      function selecionarUnidade(unidade) {
-            setForm({ ...form, setor: unidade.nome_unidade });
-            setUnidade(unidade.id)
-            setMostrarDropDown(false);
-            setSugestoesUnidades([]);
-      }
+    function selecionarUnidade(unidade) {
+        setForm({...form, setor: unidade.nome_unidade});
+        setUnidade(unidade.id)
+        setMostrarDropDown(false);
+        setSugestoesUnidades([]);
+    }
 
-      async function handleSubmit(evento) {
-              evento.preventDefault();
+    async function handleSubmit(evento) {
+        evento.preventDefault();
 
-              const dadosParaEnviar = {
-                ...form,
-                  setor: unidade,
-                  username: form.matricula
-              };
+        const dadosParaEnviar = {
+            ...form,
+            setor: unidade,
+            username: form.matricula
+        };
 
-              try {
-                  const response = await fetch("http://localhost:8000/api/usuario/", {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json"
-                  },
-                    body: JSON.stringify(dadosParaEnviar)
-                  });
+        try {
+            const response = await fetch("http://localhost:8000/api/usuario/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dadosParaEnviar)
+            });
 
-                  console.log("Dados enviados:", dadosParaEnviar)
+            console.log("Dados enviados:", dadosParaEnviar)
 
-                  if (response.ok) {
+            if (response.ok) {
 
-                      const data = await response.json();
-                      console.log(data);
+                const data = await response.json();
+                console.log(data);
 
-                      console.log("Usuário cadastrado!");
-                      navigate('/')
-                  } else {
+                console.log("Usuário cadastrado!");
+                navigate('/')
+            } else {
 
-                      const errorData = await response.json().catch(() => null) || await response.text();
-                      setErroMsg("Erro interno de servidor")
-                      console.error("Erro retornado pelo backend:", errorData);
-                  }
+                const errorData = await response.json().catch(() => null) || await response.text();
+                setErroMsg("Erro interno de servidor")
+                console.error("Erro retornado pelo backend:", errorData);
+            }
 
-              } catch (erro) {
-                  console.log("Erro ao conectar com o servidor: ", erro);
-              }
+        } catch (erro) {
+            console.log("Erro ao conectar com o servidor: ", erro);
+        }
 
-          }
+    }
 
 
-      return (
+    return (
 
-          <main>
+        <main>
 
             <div className="back">
 
@@ -116,73 +118,95 @@ function CadastroUsuario() {
 
                     <form onSubmit={handleSubmit}>
 
-                            <div className="input-group double-input">
+                        <div className="input-group double-input">
 
-                                <div>
-                                    <label>Nome</label>
-                                    <input type="text" name="first_name" placeholder="" onChange={handleChange} value={form.first_name} required/>
-                                </div>
-
-                                <div>
-                                    <label>Sobrenome</label>
-                                    <input type="text" name="last_name" placeholder="" onChange={handleChange} value={form.last_name} required/>
-                                </div>
-
+                            <div>
+                                <label>Nome</label>
+                                <input type="text" name="first_name" placeholder="" onChange={handleChange}
+                                       value={form.first_name} required/>
                             </div>
 
-                            <div className="input-group">
-                                <label>E-mail institucional</label>
-                                <input type="email" name="email" placeholder="email@ufsm.acad.br" onChange={handleChange} value={form.email} required/>
+                            <div>
+                                <label>Sobrenome</label>
+                                <input type="text" name="last_name" placeholder="" onChange={handleChange}
+                                       value={form.last_name} required/>
                             </div>
 
-                            <div className="input-group">
-                                <label>Senha</label>
-                                <input type="password" name="password" placeholder="*******" onChange={handleChange} value={form.password} required/>
-                            </div>
+                        </div>
 
-                            <div className="input-group">
-                                <label>Matricula</label>
-                                <input type="text" name="matricula" placeholder="*******" onChange={handleChange} value={form.matricula} required/>
-                            </div>
+                        <div className="input-group">
+                            <label>E-mail institucional</label>
+                            <input type="email" name="email" placeholder="email@ufsm.acad.br" onChange={handleChange}
+                                   value={form.email} required/>
+                        </div>
 
-                            <div className="input-group">
-                                <label>Setor / Unidade</label>
+                        <div className="input-group">
+                            <label>Senha</label>
+
+                            <div className="input-password-container"
+                                 style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
                                 <input
-                                    type="text"
-                                    name={"unidade"}
-                                    list="lista-unidades"
-                                    placeholder="Digite o nome ou a sigla (ex: CT, Politécnico)"
-                                    onChange={handleSearchUnidade}
-                                    value={form.setor}
+                                    type={mostrarSenha ? "text" : "password"}
+                                    name="password"
+                                    value={form.password}
+                                    placeholder="*******"
+                                    onChange={handleChange}
                                     required
-                                    autoComplete="off"
-                                    onBlur={() => setTimeout(() => setMostrarDropDown(false), 200)}
-                                    onFocus={() => sugestoesUnidades.length > 0 && setMostrarDropDown(true)}
                                 />
-
-                                {mostrarDropDown && sugestoesUnidades.length > 0 && (
-                                    <ul className="select-customizado">
-                                        {sugestoesUnidades.map((unidade) => (
-                                            <li
-                                                key={unidade.id}
-                                                onClick={() => selecionarUnidade(unidade)}
-                                            >
-                                                {unidade.nome_unidade} ({unidade.sigla_centro})
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-
+                                <button
+                                    type="button"
+                                    className="btn-toggle-password"
+                                    onClick={() => setMostrarSenha(!mostrarSenha)}
+                                >
+                                    {mostrarSenha ? <FaEyeSlash size={18}/> : <FaEye size={18}/>}
+                                </button>
                             </div>
+                        </div>
 
-                            {erroMsg && (
-                                <span style={{color: 'red'}}>{erroMsg}</span>
+                        <div className="input-group">
+                            <label>Matricula</label>
+                            <input type="text" name="matricula" placeholder="*******" onChange={handleChange}
+                                   value={form.matricula} required/>
+                        </div>
+
+                        <div className="input-group">
+                            <label>Setor / Unidade</label>
+                            <input
+                                type="text"
+                                name={"unidade"}
+                                list="lista-unidades"
+                                placeholder="Digite o nome ou a sigla (ex: CT, Politécnico)"
+                                onChange={handleSearchUnidade}
+                                value={form.setor}
+                                required
+                                autoComplete="off"
+                                onBlur={() => setTimeout(() => setMostrarDropDown(false), 200)}
+                                onFocus={() => sugestoesUnidades.length > 0 && setMostrarDropDown(true)}
+                            />
+
+                            {mostrarDropDown && sugestoesUnidades.length > 0 && (
+                                <ul className="select-customizado">
+                                    {sugestoesUnidades.map((unidade) => (
+                                        <li
+                                            key={unidade.id}
+                                            onClick={() => selecionarUnidade(unidade)}
+                                        >
+                                            {unidade.nome_unidade} ({unidade.sigla_centro})
+                                        </li>
+                                    ))}
+                                </ul>
                             )}
 
-                            <div className="post-btn">
-                                <button type="submit">Solicitar acesso</button>
-                            </div>
-                        </form>
+                        </div>
+
+                        {erroMsg && (
+                            <span style={{color: 'red'}}>{erroMsg}</span>
+                        )}
+
+                        <div className="post-btn">
+                            <button type="submit">Solicitar acesso</button>
+                        </div>
+                    </form>
 
                     <div className="links">
                         <Link to="/" className="criar-conta">Voltar</Link>
@@ -193,7 +217,7 @@ function CadastroUsuario() {
 
         </main>
 
-      );
+    );
 }
 
 export default CadastroUsuario

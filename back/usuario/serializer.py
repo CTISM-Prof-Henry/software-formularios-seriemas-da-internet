@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from .models import Usuario
 
+
 class UsuarioSerializer(serializers.ModelSerializer):
 
-    nome_unidade = serializers.CharField(source='unidade.nome_unidade', read_only=True)
+    nome_unidade = serializers.CharField(source='unidade_ativa.nome_unidade', read_only=True)
+    perfil_acesso = serializers.CharField(required=False, allow_blank=True, allow_null=True, default='Gestor')
 
     class Meta:
         model = Usuario
-
-        perfil_acesso = serializers.CharField(required=False, allow_blank=True, allow_null=True ,default='Gestor')
 
         fields = [
             'id',
@@ -21,13 +21,13 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'perfil_acesso',
             'date_joined',
             'last_login',
-            'unidade',
             'nome_unidade',
             'centro_ativo',
-            'centros_permitidos'
+            'centros_permitidos',
+            'unidade_ativa',
+            'unidades_permitidas',
+            'is_active',
         ]
-
-        # fields = '__all__'
 
         extra_kwargs = {
             'password': {'write_only': True},
@@ -40,13 +40,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         inicial_sobrenome = last_name[0] if last_name else ''
         username_limpo = f"{first_name}{inicial_sobrenome.upper()}"
-        print(username_limpo)
+
 
         centros_permitidos = validated_data.pop('centros_permitidos', [])
+        unidades_permitidas = validated_data.pop('unidades_permitidas', [])
 
         perfil = validated_data.get('perfil_acesso')
         if not perfil or str(perfil).strip() == "":
             perfil = 'Gestor'
+
 
         user = Usuario(
             username=username_limpo,
@@ -54,7 +56,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             last_name=last_name,
             email=validated_data.get('email'),
             matricula=validated_data.get('matricula'),
-            unidade=validated_data.get('unidade'),
+            unidade_ativa=validated_data.get('unidade_ativa'),
             centro_ativo=validated_data.get('centro_ativo'),
             perfil_acesso=perfil,
             is_staff=True,
@@ -66,7 +68,26 @@ class UsuarioSerializer(serializers.ModelSerializer):
         if centros_permitidos:
             user.centros_permitidos.set(centros_permitidos)
 
+        if unidades_permitidas:
+            user.unidades_permitidas.set(unidades_permitidas)
+
         return user
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+
+        representation['centros_permitidos'] = [
+            {"id": c.id, "sigla": c.sigla, "nome": c.nome}
+            for c in instance.centros_permitidos.all()
+        ]
+
+        representation['unidades_permitidas'] = [
+            {"id": u.id, "nome_unidade": getattr(u, 'nome_unidade', str(u))}
+            for u in instance.unidades_permitidas.all()
+        ]
+        return representation
+
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(help_text="Matricula do Usuario")

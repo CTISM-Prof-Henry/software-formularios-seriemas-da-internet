@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/risco/<int:pk>/listar-recomendacoes/', views.listar_recomendacoes, name='listar_recomendacoes'),
     path('api/riscos/exportar/csv/', views.exportar_riscos_csv, name='exportar_csv'),
     path('api/riscos/exportar/pdf/', views.exportar_riscos_pdf, name='exportar_pdf'),
+    path('api/usuario/entrar-centro/', views.entrar_no_centro, name='entrar_no_centro'),
 ]

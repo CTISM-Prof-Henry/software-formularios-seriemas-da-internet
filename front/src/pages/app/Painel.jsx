@@ -3,6 +3,7 @@ import '../../style/Painel.css'
 import {useRiscos} from "../../hooks/useRiscos.js";
 import {usePainel} from "../../hooks/usePainel.js"
 import {useState} from "react"
+import {useAuth} from "../../hooks/AuthContext.jsx";
 
 
 
@@ -10,6 +11,7 @@ function Painel() {
 
     const painel = usePainel()
     const [limiteExibicao, setLimiteExibicao] = useState(5);
+    const {usuario} = useAuth()
     const [filtroStatus, setFiltroStatus] = useState(() => sessionStorage.getItem('ir_status') || '');
     const [filtroCentro, setFiltroCentro] = useState(() => sessionStorage.getItem('ir_centro') || '');
     const {riscos, kpis, ultimaAtualizacao, loading} = useRiscos(
@@ -31,8 +33,7 @@ function Painel() {
 
 
 
-
-    const formatarData = (data) => {
+     const formatarData = (data) => {
         if (!data) return 'Calculando...';
 
         return data.toLocaleDateString('pt-BR', {

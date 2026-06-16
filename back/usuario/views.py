@@ -27,10 +27,10 @@ from unidade.models import Unidade
 @api_view(['GET'])
 def listar_usuarios(request):
 
-    usuarios_validos = Usuario.objects.select_related('unidade').exclude(
+    usuarios_validos = Usuario.objects.select_related('unidade_ativa').exclude(
         Q(first_name__isnull=True) | Q(first_name__exact='') |
         Q(matricula__isnull=True) | Q(matricula__exact='') |
-        Q(unidade__isnull=True)
+        Q(unidade_ativa__isnull=True)
     ).order_by('-id')
 
     if request.GET.get('count-users'):
@@ -44,7 +44,7 @@ def listar_usuarios(request):
         usuarios_validos = usuarios_validos.filter(
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
-            Q(unidade__nome_unidade__icontains=query)
+            Q(unidade_ativa__nome_unidade__icontains=query)
         )
 
     if limit:
@@ -88,7 +88,7 @@ def get_usuario(request, uid):
     try:
         user_id = force_str(urlsafe_base64_decode(uid))
 
-        user = Usuario.objects.select_related('unidade').get(pk=user_id)
+        user = Usuario.objects.select_related('unidade_ativa').get(pk=user_id)
 
     except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
         user = None
@@ -109,7 +109,7 @@ def get_usuario(request, uid):
 def get_usuario_by_id(request, pk):
 
     try:
-        user = Usuario.objects.select_related('unidade').get(id=pk)
+        user = Usuario.objects.select_related('unidade_ativa').get(id=pk)
 
     except Usuario.DoesNotExist:
         return Response({"error": "Usuário não existe!"}, status=404)
@@ -258,11 +258,12 @@ def cadastrar_usuario(request):
             with transaction.atomic():
 
                 usuario = serializer.save(
-                    unidade=unidade_escolhida,
+                    unidade_ativa=unidade_escolhida,
                     centro_ativo=centro_da_unidade
                 )
 
                 usuario.centros_permitidos.add(centro_da_unidade)
+                usuario.unidades_permitidas.add(unidade_escolhida)
 
             print(f"Dados: {serializer.data}")
             return Response({"mensagem": "Usuário cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
@@ -272,6 +273,45 @@ def cadastrar_usuario(request):
     except Exception as e:
         return Response({"erro": "Falha do servidor", "detalhes": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def entrar_na_unidade(request):
+
+    unidade_id = request.data.get('unidade_id')
+    usuario = request.user
+
+    if not unidade_id:
+        return Response({"erro": "O ID da unidade é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        unidade_escolhida = Unidade.objects.get(id=unidade_id)
+
+
+        if not usuario.unidades_permitidas.filter(id=unidade_id).exists():
+            return Response(
+                {"erro": "Você não tem permissão para acessar esta Unidade."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
+        usuario.unidade_ativa = unidade_escolhida
+        usuario.save()
+
+        nome_exibicao = getattr(unidade_escolhida, 'nome_unidade', str(unidade_escolhida))
+
+        return Response({
+            "mensagem": f"Você entrou na unidade {nome_exibicao} com sucesso!",
+            "unidade_id": unidade_escolhida.id
+        }, status=status.HTTP_200_OK)
+
+
+    except Unidade.DoesNotExist:
+        return Response({"erro": "A unidade selecionada não existe."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @csrf_exempt
 @api_view(['POST'])

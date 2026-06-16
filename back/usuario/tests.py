@@ -35,7 +35,7 @@ class UsuarioViewsTestCase(APITestCase):
             first_name="João",
             last_name="Silva",
             matricula="1234567",
-            unidade=self.unidade,
+            unidade_ativa=self.unidade,
             centro_ativo=self.centro
         )
 
