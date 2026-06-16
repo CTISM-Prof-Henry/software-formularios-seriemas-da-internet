@@ -1,16 +1,17 @@
 import '../style/components/Header.css'
-import {useAuth} from "../hooks/AuthContext.jsx"
-import {useTheme} from '../hooks/useTheme';
-import {useEffect, useState, useRef} from 'react'
-import {Link} from 'react-router-dom'
-import {FaChevronDown, FaUserShield, FaSignOutAlt, FaSun, FaMoon} from 'react-icons/fa';
+import { useAuth } from "../hooks/AuthContext.jsx"
+import { useTheme } from '../hooks/useTheme';
+import { useEffect, useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { FaChevronDown, FaUserShield, FaSignOutAlt, FaSun, FaMoon, FaBuilding, FaCheck } from 'react-icons/fa';
 
 function Header() {
 
-    const {theme, toggleTheme} = useTheme();
-    const {usuario, fazerLogout} = useAuth()
+    const { theme, toggleTheme } = useTheme();
+    const { usuario, fazerLogout } = useAuth()
     const [dropdownAberto, setDropdownAberto] = useState(false);
     const dropdownRef = useRef(null);
+    const [centro, setCentro] = useState()
 
     const iniciais = usuario?.first_name
         ? `${usuario.first_name[0]}${usuario?.last_name?.[0] || ''}`.toUpperCase() : '--';
@@ -27,8 +28,29 @@ function Header() {
 
     const isAuditor = usuario?.perfil_acesso?.toLowerCase() === 'auditor';
 
-    return (
+    const handleEntrarNoCentro = async (centroId) => {
+        try {
+            const response = await fetch("http://localhost:8000/api/usuario/entrar-centro/", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ centro_id: centroId })
+            });
 
+            const dados = await response.json();
+            if (response.ok) {
+                setCentro(dados.body)
+                window.location.reload();
+            } else {
+                console.log(dados.erro);
+                alert(dados.erro);
+            }
+        } catch (error) {
+            console.error("Erro ao mudar de centro:", error);
+        }
+    };
+
+    return (
         <header>
             <div className="logo">
                 <h1>Gestor de Risco</h1>
@@ -49,44 +71,80 @@ function Header() {
                     <FaChevronDown className={`icon-arrow ${dropdownAberto ? 'open' : ''}`}/>
                 </button>
 
-
                 {dropdownAberto && (
                     <div className="user-dropdown">
                         <div className="dropdown-header">
                             <strong>{usuario?.username}</strong>
-                            <span>{usuario?.nome_unidade || 'Unidade nao definida'}</span>
+                            <span>{usuario?.nome_unidade || 'Unidade não definida'}</span>
                         </div>
 
                         <ul className="dropdown-menu">
 
                             {isAuditor && (
                                 <li>
-                                    <Link to="/administrador" onClick={() => setDropdownAberto(false)}>
+                                    <Link to="/administrador" onClick={() => setDropdownAberto(false)} className="btn-dropdown-item">
                                         <FaUserShield/> Administração
                                     </Link>
                                 </li>
                             )}
 
+                            <div className="dropdown-divider" style={{ borderTop: '1px solid #eee', margin: '8px 0' }}></div>
+                            <li style={{ padding: '4px 16px', fontSize: '12px', color: '#888', fontWeight: 'bold' }}>
+                                MEUS CENTROS:
+                            </li>
 
-                            <button onClick={toggleTheme} className="btn-theme">
-                                {theme === 'light' ? <FaMoon /> : <FaSun />}
+                            {usuario?.centros_permitidos && usuario.centros_permitidos.length > 0 ? (
+                                usuario.centros_permitidos.map((centro) => {
+                                    const centroId = centro.id || centro;
+                                    const centroNome = centro.nome || centro.sigla || `Centro ${centroId}`;
+
+                                    const isActive = usuario?.centro_ativo === centroId || usuario?.centro_ativo?.id === centroId;
+
+                                    return (
+                                        <li key={centroId}>
+                                            <button
+                                                onClick={() => {
+                                                    if(!isActive) handleEntrarNoCentro(centroId);
+                                                }}
+                                                className="btn-dropdown-item"
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    width: '100%',
+                                                    opacity: isActive ? 0.7 : 1,
+                                                    cursor: isActive ? 'default' : 'pointer'
+                                                }}
+                                            >
+                                                <span><FaBuilding style={{ marginRight: '8px' }}/> {centroNome}</span>
+                                                {isActive && <FaCheck style={{ color: '#10b981' }} />}
+                                            </button>
+                                        </li>
+                                    )
+                                })
+                            ) : (
+                                <li style={{ padding: '8px 16px', fontSize: '13px', color: '#ccc' }}>
+                                    Nenhum centro vinculado
+                                </li>
+                            )}
+                            <div className="dropdown-divider" style={{ borderTop: '1px solid #eee', margin: '8px 0' }}></div>
+
+                            <button onClick={toggleTheme} className="btn-theme ">
+                                {theme === 'light' ? <><FaMoon/></> : <><FaSun/></>}
                             </button>
 
 
                             <li className="logout-item">
                                 <button onClick={fazerLogout} className="btn-logout btn-dropdown-item">
-                                    <FaSignOutAlt/> Sair do Sistema
+                                    <FaSignOutAlt /> Sair do Sistema
                                 </button>
                             </li>
                         </ul>
                     </div>
                 )}
             </div>
-
         </header>
-
     )
 }
-
 
 export default Header

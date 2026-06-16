@@ -14,11 +14,15 @@ class Centro(models.Model):
 
 
 class Usuario(AbstractUser):
-
     matricula = models.CharField(max_length=20, unique=True)
     PERFIS = [('Admin', 'Administrador'), ('Gestor', 'Gestor de Riscos'), ('Auditor', 'Auditor')]
     perfil_acesso = models.CharField(max_length=20, choices=PERFIS, default='Gestor')
 
-    unidade = models.ForeignKey(Unidade, on_delete=models.SET_NULL, null=True, blank=True)
-    centro_ativo = models.ForeignKey(Centro, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarios_ativos')
-    centros_permitidos = models.ManyToManyField(Centro, related_name='usuarios_permitidos',blank=True)
+
+    centro_ativo = models.ForeignKey(Centro, on_delete=models.SET_NULL, null=True, blank=True,
+                                     related_name='usuarios_ativos')
+    centros_permitidos = models.ManyToManyField(Centro, related_name='usuarios_permitidos', blank=True)
+
+    unidade_ativa = models.ForeignKey(Unidade, on_delete=models.SET_NULL, null=True, blank=True,
+                                      related_name='usuarios_ativos_unidade')
+    unidades_permitidas = models.ManyToManyField(Unidade, related_name='usuarios_permitidos_unidade', blank=True)

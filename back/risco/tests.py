@@ -20,7 +20,7 @@ class RiscoViewsTestCase(APITestCase):
             username="gestor_risco",
             password="SenhaSegura123!",
             centro_ativo=self.centro,
-            unidade=self.unidade
+            unidade_ativa=self.unidade
         )
 
         self.usuario.centro_ativo = self.centro

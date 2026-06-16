@@ -23,6 +23,7 @@ from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER
 from risco.models import Risco, RecomendacaoAuditoria
 from risco.serializer import RiscoSerializer, RecomendacaoAuditoriaSerializer
 from usuario.authentications import CsrfExemptSessionAuthentication, IsAuditorPermission
+from usuario.models import Centro
 
 
 @api_view(['GET'])
@@ -71,8 +72,8 @@ def listar_riscos(request):
 
     centros_ids = list(usuario.centros_permitidos.values_list('id', flat=True))
 
-    if usuario.unidade_id and usuario.unidade_id not in centros_ids:
-        centros_ids.append(usuario.unidade_id)
+    if usuario.unidade_ativa_id and usuario.unidade_ativa_id not in centros_ids:
+        centros_ids.append(usuario.unidade_ativa_id)
 
     riscos = Risco.objects.select_related('categoria', 'responsavel', 'desafio') \
         .filter(unidade_responsavel__in=centros_ids)
@@ -159,6 +160,37 @@ def get_risco_by_id(request, pk):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def entrar_no_centro(request):
+
+    centro_id = request.data.get('centro_id')
+    usuario = request.user
+
+    if not centro_id:
+        return Response({"erro": "O ID do centro é obrigatório."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        centro_escolhido = Centro.objects.get(id=centro_id)
+
+
+        if not usuario.centros_permitidos.filter(id=centro_id).exists():
+            return Response({"erro": "Você não tem permissão para entrar neste Centro."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        usuario.centro_ativo = centro_escolhido
+        usuario.save()
+
+        return Response({
+            "mensagem": f"Você entrou no centro {centro_escolhido.sigla} com sucesso!",
+            "centro_ativo_id": centro_escolhido.id
+        }, status=status.HTTP_200_OK)
+
+    except Centro.DoesNotExist:
+        return Response({"erro": "O Centro selecionado não existe."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @csrf_exempt

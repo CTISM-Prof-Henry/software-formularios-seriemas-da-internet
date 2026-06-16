@@ -208,3 +208,14 @@ section {
   background-color: var(--lighter-blue);
   color: var(--brand-light-blue);
 }
+
+.btn-toggle-password {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted, #666);
+  display: flex;
+  align-items: center;
+}

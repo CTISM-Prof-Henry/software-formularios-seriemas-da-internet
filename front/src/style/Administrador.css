@@ -229,6 +229,16 @@ td {
     transition: opacity 0.2s;
 }
 
+.btn-editar.disabled,
+.btn-editar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+
+
 .btn-editar svg {
     width: 16px;
     height: 16px;

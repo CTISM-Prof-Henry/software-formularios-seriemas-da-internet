@@ -99,6 +99,23 @@ function RegistrarRisco() {
         setFormData({...formData, [name]: value});
     };
 
+    const tratarPayload = () => {
+        const dadosParaEnviar = { ...formData };
+
+        if (dadosParaEnviar.unidade_responsavel === "Não informado" || dadosParaEnviar.unidade_responsavel === "") {
+            dadosParaEnviar.unidade_responsavel = null;
+        } else {
+
+            dadosParaEnviar.unidade_responsavel = parseInt(dadosParaEnviar.unidade_responsavel);
+        }
+
+        if (!dadosParaEnviar.responsavel) {
+            dadosParaEnviar.responsavel = null;
+        }
+
+        return dadosParaEnviar;
+};
+
     const salvarEtapa = async (numeroEtapa) => {
         setStatusBotao(({...statusBotao, [numeroEtapa]: 'loading'}));
         setErroMsg('');
@@ -110,6 +127,21 @@ function RegistrarRisco() {
             : `http://localhost:8000/api/risco/`;
 
         if (numeroEtapa === 1) {
+
+            let unidadeId = null;
+
+            if (usuario?.unidade_ativa?.id) {
+
+                unidadeId = usuario.unidade_ativa.id;
+            } else if (usuario?.unidade_ativa) {
+
+                unidadeId = usuario.unidade_ativa;
+
+            } else if (usuario?.unidade) {
+
+                unidadeId = usuario.unidade?.id || usuario.unidade;
+            }
+
             payload = {
                 titulo: formData.titulo,
                 categoria: formData.categoria,
@@ -119,7 +151,7 @@ function RegistrarRisco() {
                 causas: formData.causas,
                 consequencias: formData.consequencias,
                 responsavel: formData.responsavel,
-                unidade_responsavel: usuario?.unidade || "Não informado",
+                unidade_responsavel: unidadeId || null,
                 status: 'Identificação',
             };
         } else if (numeroEtapa === 2) {

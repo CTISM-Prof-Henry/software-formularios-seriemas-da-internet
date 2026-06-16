@@ -5,13 +5,16 @@ import {HiUsers} from "react-icons/hi2";
 import {GoShieldCheck} from "react-icons/go";
 import {CiSearch} from "react-icons/ci";
 import {MdClose} from "react-icons/md";
-import {getCookie} from "../../hooks/AuthContext.jsx";
+import {useAuth, getCookie} from "../../hooks/AuthContext.jsx";
+
+
 
 function AdministradorAcessos() {
     const [termoBusca, setTermoBusca] = useState('');
     const [limiteExibicao, setLimiteExibicao] = useState(5);
     const {countUsuarios, usuarios, loading, erro} = useAdmin(limiteExibicao, termoBusca);
     const [listaUsuarios, setListaUsuarios] = useState([]);
+    const {usuario} = useAuth()
 
     React.useEffect(() => {
         if (usuarios) setListaUsuarios(usuarios);
@@ -72,6 +75,19 @@ function AdministradorAcessos() {
             console.error("Erro na requisição:", error);
             alert("Erro de conexão.");
         }
+    };
+
+    const formatarData = (dataIso) => {
+        if (!dataIso) return "Nunca acessou";
+
+        const data = new Date(dataIso);
+        return data.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).replace(', ', ' às ');
     };
 
     return (
@@ -158,6 +174,7 @@ function AdministradorAcessos() {
                                 <th>DEPARTAMENTO</th>
                                 <th>CARGO</th>
                                 <th>STATUS</th>
+                                <th>ULTIMO LOGIN</th>
                                 <th className="text-right">AÇÕES</th>
                             </tr>
                             </thead>
@@ -198,15 +215,22 @@ function AdministradorAcessos() {
                                         </td>
                                         <td>
                                             <div className="status-cell">
-                                            <span
+                                                <span
                                                 className={`status-dot ${user.is_active ? 'dot-active' : 'dot-inactive'}`}></span>
                                                 <span
                                                     className={user.is_active ? 'text-active' : 'text-inactive'}>{user.is_active ? 'Ativo' : 'Inativo'}</span>
                                             </div>
                                         </td>
+                                        <td>
+                                            <span>{formatarData(user.last_login)}</span>
+                                        </td>
                                         <td className="text-right">
 
-                                            <button className="btn-editar" onClick={() => abrirModal(user)}>
+                                            <button
+                                                className={`btn-editar ${usuario?.id === user.id ? 'disabled' : ''}`}
+                                                onClick={() => abrirModal(user)}
+                                                disabled={usuario?.id === user.id}
+                                            >
                                                 <GoShieldCheck style={{marginRight: '5px'}}/>
                                                 EDITAR PERMISSÕES
                                             </button>
