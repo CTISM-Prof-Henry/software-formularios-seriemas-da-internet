@@ -12,19 +12,19 @@ function RedefinirSenha() {
     const redefinir = async (evento) => {
         evento.preventDefault()
 
-        if (senha !== confirmacaoSenha) { //se as senhas nao coincidem, exibe uma mensagem de erro
+        if (senha !== confirmacaoSenha) {
             setErro('As senhas não coincidem')
             return
-        }   //chama a api para redefinir a senha, passa uid, token e nova senha
+        }
         try {
-            const resposta = await fetch('/api/confirmar-reset-senha/', {
+            const resposta = await fetch('http://localhost:8000/api/confirmar-senha-nova/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ uid, token, nova_senha: senha })
             })
             const dados = await resposta.json()
             if (resposta.ok) {
-                navigate('/login')
+                navigate('/')
             } else {
                 setErro(dados.erro)
             }
@@ -60,6 +60,10 @@ function RedefinirSenha() {
                                 <input type="text" value={confirmacaoSenha} placeholder="*********" onChange={
                                     (e) => setConfirmacaoSenha(e.target.value)} required/>
                             </div>
+
+                            {erro && (
+                                <span style={{color: 'red'}}>{erro}</span>
+                            )}
 
                             <div className="post-btn">
                                 <button type="submit" >Confirmar</button>

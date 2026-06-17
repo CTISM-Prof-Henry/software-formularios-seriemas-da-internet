@@ -72,7 +72,7 @@ function App() {
 
                     <Route path="/cadastro" element={<CadastroUsuario/>}/>
                     <Route path="/recuperar-senha" element={<RecuperarSenha/>}/>
-                    <Route path="/redefinir-senha/:uid/:token" element={<RedefinirSenha/>}/>
+                    <Route path="/recuperar-senha/:uid/:token" element={<RedefinirSenha/>}/>
 
                     <Route element={<RotaProtegida/>}>
                         <Route element={<Layout/>}>

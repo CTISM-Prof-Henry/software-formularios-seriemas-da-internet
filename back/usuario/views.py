@@ -9,8 +9,12 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.tokens import default_token_generator
 from django.db import transaction
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
 from django.contrib.auth import login
 from django.db.models import Q
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -18,6 +22,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from drf_spectacular.utils import extend_schema
+
 from .authentications import CsrfExemptSessionAuthentication, IsAuditorPermission
 from .serializer import UsuarioSerializer
 from .models import Usuario, Centro
@@ -313,35 +318,48 @@ def entrar_na_unidade(request):
     except Exception as e:
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @csrf_exempt
 @api_view(['POST'])
 def reset_senha(request):
-
     email = request.data.get('email')
     user = Usuario.objects.filter(email=email).first()
 
     try:
-
         if user:
-
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
 
             link_reset = f"http://localhost:5173/recuperar-senha/{uid}/{token}"
 
-            send_mail(
-                "Redefinicao de Senha - Sistema",
-                f"Clique no link para resetar sua senha: {link_reset}",
-                "noreply@meusistema.com",
-                [user.email],
-                fail_silently=True,
+
+            contexto = {
+                'nome': user.first_name if user.first_name else user.username,
+                'link_reset': link_reset
+            }
+
+            html_content = render_to_string('usuario/reset_senha_email.html', contexto)
+
+            text_content = strip_tags(html_content)
+
+
+            email_mensagem = EmailMultiAlternatives(
+                subject="Redefinição de Senha - Gestor de Risco",
+                body=text_content,
+                from_email="noreply@meusistema.com",
+                to=[user.email]
             )
+
+            email_mensagem.attach_alternative(html_content, "text/html")
+
+
+            email_mensagem.send(fail_silently=True)
 
             return JsonResponse({
                 "message": "Se um email existir, um link foi enviado.",
                 "uid": uid,
                 "token": token,
-                }, status=200)
+            }, status=200)
 
         return JsonResponse({"erro": "Email nao existe entre os usuairos"}, status=400)
 
@@ -351,9 +369,8 @@ def reset_senha(request):
 
 @csrf_exempt
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAuditorPermission])
+@permission_classes([AllowAny])
 def confirmar_reset_senha(request):
-
     uid = request.data.get('uid')
     token = request.data.get('token')
     nova_senha = request.data.get('nova_senha')
@@ -363,13 +380,11 @@ def confirmar_reset_senha(request):
         user = Usuario.objects.get(pk=user_id)
 
         if user and default_token_generator.check_token(user, token):
-
             user.set_password(nova_senha)
             user.save()
-
             return JsonResponse({"message": "Senha redefinida com sucesso!"}, status=200)
 
-        return JsonResponse({"erro": "Link de redefinicao invalido"}, status=400)
+        return JsonResponse({"erro": "Link de redefinicao invalido ou expirado."}, status=400)
 
     except Exception as e:
         return JsonResponse({"erro": "Erro de servidor", "detalhes": str(e)}, status=500)
