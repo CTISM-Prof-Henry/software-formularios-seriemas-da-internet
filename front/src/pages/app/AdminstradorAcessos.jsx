@@ -6,10 +6,13 @@ import {GoShieldCheck} from "react-icons/go";
 import {CiSearch} from "react-icons/ci";
 import {MdClose} from "react-icons/md";
 import {useAuth, getCookie} from "../../hooks/AuthContext.jsx";
+import { useNavigate } from 'react-router-dom';
 
 
 
 function AdministradorAcessos() {
+    const navigate = useNavigate();
+
     const [termoBusca, setTermoBusca] = useState('');
     const [limiteExibicao, setLimiteExibicao] = useState(5);
     const {countUsuarios, usuarios, loading, erro} = useAdmin(limiteExibicao, termoBusca);
@@ -98,6 +101,14 @@ function AdministradorAcessos() {
                     <h2>Gestão de Usuários</h2>
                     <p>Administre acessos e permissões dos colaboradores da instituição.</p>
                 </div>
+
+                <button
+                    onClick={() => navigate('/planejamento')}
+                    className="btn-concluir"
+                    style={{padding: 10, position: 'absolute', right: 60}}
+                >
+                    + Planejamento
+                </button>
             </div>
 
             <div className="kpi-row">

@@ -1,6 +1,10 @@
 from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
 from rest_framework.test import APITestCase
 from rest_framework import status
+
+from planejamento.models import Planejamento
 from .models import Risco
 from usuario.models import Usuario, Centro
 from unidade.models import Unidade
@@ -28,6 +32,19 @@ class RiscoViewsTestCase(APITestCase):
         self.usuario.save()
         self.usuario.centros_permitidos.add(self.centro)
 
+        hoje = timezone.now().date()
+        ano_que_vem = hoje + timedelta(days=365)
+
+        self.ciclo = Planejamento.objects.create(
+            ano=2026,
+            titulo="Ciclo Anual de Gestão de Riscos 2026",
+            status="Ativo",
+            centro=self.centro,
+            data_inicio=hoje,
+            data_fim=ano_que_vem,
+            criado_por=self.usuario
+        )
+
         self.categoria = Categoria.objects.create(nome_categoria="Estratégico")
         self.desafio = Desafio.objects.create(numero=1, nome="Melhorar a Governança")
 
@@ -39,6 +56,7 @@ class RiscoViewsTestCase(APITestCase):
             status="Em Tratamento",
             unidade_responsavel=self.unidade,
             centro=self.centro,
+            ciclo=self.ciclo,
             responsavel=self.usuario,
             categoria=self.categoria,
             desafio=self.desafio,
@@ -53,6 +71,7 @@ class RiscoViewsTestCase(APITestCase):
             status="Concluído",
             unidade_responsavel=self.unidade,
             centro=self.centro,
+            ciclo=self.ciclo,
             responsavel=self.usuario,
             categoria=self.categoria,
             desafio=self.desafio,
@@ -83,11 +102,6 @@ class RiscoViewsTestCase(APITestCase):
         self.client.force_authenticate(user=self.usuario)
 
         response = self.client.get(self.url_listar, {'q': 'licitações', 'limit': 10})
-
-        if response.status_code == 404:
-            print(f"\n\n--- 🛑 ERRO DO SERIALIZER BARROU A CRIAÇÃO 🛑 ---")
-            print(response.data)
-            print("---------------------------------------------------\n\n")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -129,6 +143,7 @@ class RiscoViewsTestCase(APITestCase):
 
         risco_criado = Risco.objects.get(titulo="Novo Risco de Teste")
         self.assertEqual(risco_criado.centro, self.centro)
+        self.assertEqual(risco_criado.ciclo, self.ciclo)
 
 
     def test_update_risco_etapa_sucesso(self):

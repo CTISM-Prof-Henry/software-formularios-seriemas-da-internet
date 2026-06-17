@@ -180,6 +180,9 @@ function InventarioRiscos() {
                         <option value="Financeiro">Financeiro</option>
                         <option value="Estratégico">Estratégico</option>
                         <option value="Legal">Legal</option>
+                        <option value="Imagem">Imagem</option>
+                        <option value="Integridade">Integridade</option>
+                        <option value="Ambiente">Ambiente Extremo</option>
                     </select>
 
                     <select
@@ -208,10 +211,8 @@ function InventarioRiscos() {
                     >
                         <option value="">Todos os Status</option>
                         <option value="Identificação">Identificação</option>
-                        <option value="Análise">Análise</option>
                         <option value="Tratamento">Em Tratamento</option>
-                        <option value="Monitorado">Monitorado</option>
-                        <option value="Concluído">Concluído</option>
+                        <option value="Resolvido">Concluído</option>
                     </select>
 
                     <select
@@ -259,7 +260,11 @@ function InventarioRiscos() {
                                 const stat = formatarStatus(risco.status);
 
                                 return (
-                                    <tr key={risco.id} onClick={() => navigate(`/detalhes-risco/${risco.id}`)}>
+                                    <tr
+                                        key={risco.id}
+                                        onClick={() => navigate(`/detalhes-risco/${risco.id}`)}
+                                        className={risco.status === 'Resolvido' ? 'linha-resolvido' : ''}
+                                    >
                                         <td className="td-id">{risco.id_estrutural || risco.codigo}</td>
                                         <td className="td-desc">{risco.titulo}</td>
                                         <td>

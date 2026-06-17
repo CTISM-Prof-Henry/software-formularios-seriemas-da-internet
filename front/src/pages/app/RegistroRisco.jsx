@@ -13,7 +13,7 @@ function RegistrarRisco() {
     const navigate = useNavigate();
 
     const [riscoId, setRiscoId] = useState(paramId || null);
-    const [statusBotao, setStatusBotao] = useState({1: 'idle', 2: 'idle', 3: 'idle'});
+    const [statusBotao, setStatusBotao] = useState({1: 'idle', 2: 'idle', 3: 'idle', 4: 'idle'});
     const [erroMsg, setErroMsg] = useState('');
     const {usuario} = useAuth();
 
@@ -32,7 +32,14 @@ function RegistrarRisco() {
         resposta_risco: '', tipo_acao: '', acao_tratamento: '',
         justificativa_acao: '', como_implementar: '', responsavel_tratamento: '',
         prazo_implementacao: '', recursos_necessarios: '',
-        probabilidade_residual: '', impacto_residual: '', indicadores_monitoramento: ''
+        probabilidade_residual: '', impacto_residual: '', indicadores_monitoramento: '',
+
+        // Etapa 4
+        status_tratamento: 'Não Iniciado',
+        resultados_alcancados: '',
+        data_proxima_avaliacao: '',
+
+        versao: 1
     });
 
     const {
@@ -81,10 +88,16 @@ function RegistrarRisco() {
                             probabilidade_residual: dados.probabilidade_residual || '',
                             impacto_residual: dados.impacto_residual || '',
                             recursos_necessarios: dados.recursos_necessarios || '',
-                            indicadores_monitoramento: dados.indicadores_monitoramento || ''
+                            indicadores_monitoramento: dados.indicadores_monitoramento || '',
+
+                            status_tratamento: dados.status_tratamento || 'Não Iniciado',
+                            resultados_alcancados: dados.resultados_alcancados || '',
+                            data_proxima_avaliacao: dados.data_proxima_avaliacao || '',
+
+                            versao: dados.versao || 1,
                         });
 
-                        setStatusBotao({1: 'Salvar etapa', 2: 'Salvar etapa', 3: 'Salvar etapa'});
+                        setStatusBotao({1: 'Salvar etapa', 2: 'Salvar etapa', 3: 'Salvar etapa', 4: 'Salvar etapa'});
                     }
                 } catch (erro) {
                     console.error("Erro ao carregar risco para edição:", erro);
@@ -100,7 +113,7 @@ function RegistrarRisco() {
     };
 
     const tratarPayload = () => {
-        const dadosParaEnviar = { ...formData };
+        const dadosParaEnviar = {...formData};
 
         if (dadosParaEnviar.unidade_responsavel === "Não informado" || dadosParaEnviar.unidade_responsavel === "") {
             dadosParaEnviar.unidade_responsavel = null;
@@ -114,7 +127,7 @@ function RegistrarRisco() {
         }
 
         return dadosParaEnviar;
-};
+    };
 
     const salvarEtapa = async (numeroEtapa) => {
         setStatusBotao(({...statusBotao, [numeroEtapa]: 'loading'}));
@@ -153,6 +166,7 @@ function RegistrarRisco() {
                 responsavel: formData.responsavel,
                 unidade_responsavel: unidadeId || null,
                 status: 'Identificação',
+                versao: formData.versao
             };
         } else if (numeroEtapa === 2) {
 
@@ -166,7 +180,8 @@ function RegistrarRisco() {
                 probabilidade: prob,
                 impacto: imp,
                 nivel: pontuacaoCalculada,
-                status: 'Avaliação'
+                status: 'Avaliação',
+                versao: formData.versao
             };
         } else if (numeroEtapa === 3) {
             payload = {
@@ -183,7 +198,16 @@ function RegistrarRisco() {
 
                 recursos_necessarios: formData.recursos_necessarios,
                 indicadores_monitoramento: formData.indicadores_monitoramento,
-                status: 'Tratamento'
+                status: 'Tratamento',
+                versao: formData.versao
+            };
+        } else if (numeroEtapa === 4) {
+            payload = {
+                status_tratamento: formData.status_tratamento,
+                resultados_alcancados: formData.resultados_alcancados,
+                data_proxima_avaliacao: formData.data_proxima_avaliacao || null,
+                status: formData.status_tratamento === 'Concluído' ? 'Resolvido' : 'Monitoramento',
+                versao: formData.versao
             };
         }
 
@@ -219,6 +243,7 @@ function RegistrarRisco() {
                     : dados.erro || dados.detail || "Ocorreu um erro ao salvar."
                 ;
 
+                setFormData(prev => ({...prev, versao: (dados.versao || prev.versao + 1)}))
                 setErroMsg(mensagemCompleta);
                 setStatusBotao({...statusBotao, [numeroEtapa]: 'idle'});
             }
@@ -437,7 +462,7 @@ function RegistrarRisco() {
                 </div>
 
 
-                {/* ETAPA 3 */}
+               
                 <div className="form-card">
                     <div className="section-header">
                         <div className="step-badge">3</div>
@@ -547,6 +572,83 @@ function RegistrarRisco() {
                             disabled={statusBotao[3] === 'loading' || !riscoId}>
                         {!riscoId ? 'Salve as etapas anteriores' : statusBotao[3] === 'loading' ? 'Salvando...' : statusBotao[3] === 'salvo' ? <>
                             <FaCheck style={{marginRight: '5px'}}/> Salvo!</> : 'Salvar etapa 3'}
+                    </button>
+                </div>
+
+                <div className="form-card">
+                    <div className="section-header">
+                        <div className="step-badge">4</div>
+                        <div>
+                            <h3>Monitoramento Contínuo</h3>
+                            <p>Acompanhe a execução do plano de ação e os resultados alcançados.</p>
+                        </div>
+                    </div>
+
+                    <div className="form-row">
+                        <div className="form-group" style={{flex: 1}}>
+                            <label>Indicadores de Sucesso (Definidos na Etapa 3)</label>
+                            <div style={{padding: '10px 0', color: 'var(--text-dark)'}}>
+                                {formData.indicadores_monitoramento || 'Nenhum indicador definido.'}
+                            </div>
+                        </div>
+
+                        <div className="form-group" style={{flex: 1}}>
+                            <label>Status do Tratamento</label>
+                            <select name="status_tratamento" value={formData.status_tratamento} onChange={handleChange}>
+                                <option value="Não Iniciado">Não Iniciado</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Atrasado">Atrasado</option>
+                                <option value="Concluído">Concluído / Resolvido</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="form-group full-width">
+                        <label>Resultados Alcançados Até Agora</label>
+                        <textarea
+                            name="resultados_alcancados"
+                            placeholder="Descreva o que já foi feito ou alcançado... (Aguardando avaliação de resultados)"
+                            rows="3"
+                            value={formData.resultados_alcancados}
+                            onChange={handleChange}
+                            style={{
+                                borderLeft: '4px solid #10b981'
+                            }}
+                        ></textarea>
+                    </div>
+
+                    <div className="form-row"
+                         style={{marginTop: '20px', paddingTop: '20px', borderTop: '1px solid var(--border-color)'}}>
+                        <div className="form-group">
+                            <label>Próxima Avaliação</label>
+                            <input
+                                type="date"
+                                name="data_proxima_avaliacao"
+                                value={formData.data_proxima_avaliacao}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+
+                        <div className="form-group">
+                            <label>Probabilidade Residual Esperada</label>
+                            <div>
+                                {formData.probabilidade_residual || '-'}
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Impacto Residual Esperado</label>
+                            <div >
+                                {formData.impacto_residual || '-'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" className="btn-save" onClick={() => salvarEtapa(4)}
+                            disabled={statusBotao[4] === 'loading' || !riscoId}>
+                        {!riscoId ? 'Salve as etapas anteriores' : statusBotao[4] === 'loading' ? 'Salvando...' : statusBotao[4] === 'salvo' ? <>
+                            <FaCheck style={{marginRight: '5px'}}/> Salvo!</> : 'Salvar etapa 4'}
                     </button>
                 </div>
 

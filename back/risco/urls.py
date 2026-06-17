@@ -6,6 +6,7 @@ urlpatterns = [
     path('api/risco/<int:pk>/', views.get_risco_by_id, name='get_risco_by_id'),
     path('api/risco/', views.create_risco, name='create_risco'),
     path('api/risco/<int:pk>/update/', views.update_risco_etapa, name='update_risco'),
+    path('api/risco/<int:pk>/concluir/', views.concluir_risco, name='concluir_risco'),
     path('api/riscos/<int:id>/historico/', views.historico_risco, name='historico_risco'),
     path('api/risco/<int:pk>/fazer-recomendacao/', views.fazer_recomendacao, name='fazer_recomendacao'),
     path('api/risco/<int:pk>/listar-recomendacoes/', views.listar_recomendacoes, name='listar_recomendacoes'),

@@ -12,6 +12,7 @@ function Header() {
     const [dropdownAberto, setDropdownAberto] = useState(false);
     const dropdownRef = useRef(null);
     const [centro, setCentro] = useState()
+    const [cicloAtual, setCicloAtual] = useState(null);
 
     const iniciais = usuario?.first_name
         ? `${usuario.first_name[0]}${usuario?.last_name?.[0] || ''}`.toUpperCase() : '--';
@@ -27,6 +28,29 @@ function Header() {
     }, []);
 
     const isAuditor = usuario?.perfil_acesso?.toLowerCase() === 'auditor';
+
+
+    useEffect(() => {
+        const buscarCiclo = async () => {
+            try {
+
+                const response = await fetch("http://localhost:8000/api/obter-planejamento/", {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const dados = await response.json();
+                    setCicloAtual(dados);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar o ciclo ativo:", error);
+            }
+        };
+
+        buscarCiclo();
+    }, []);
+
 
     const handleEntrarNoCentro = async (centroId) => {
         try {
@@ -54,7 +78,7 @@ function Header() {
         <header>
             <div className="logo">
                 <h1>Gestor de Risco</h1>
-                <p>| Planejamento 2026</p>
+                <p>| {cicloAtual ? `Planejamento ${cicloAtual.ano}` : 'Sem Ciclo Ativo'}</p>
             </div>
 
             <div className="header-user-section" ref={dropdownRef}>
@@ -88,7 +112,7 @@ function Header() {
                                 </li>
                             )}
 
-                            <div className="dropdown-divider" style={{ borderTop: '1px solid #eee', margin: '8px 0' }}></div>
+                            <div className="dropdown-divider"></div>
                             <li style={{ padding: '4px 16px', fontSize: '12px', color: '#888', fontWeight: 'bold' }}>
                                 MEUS CENTROS:
                             </li>
@@ -107,14 +131,6 @@ function Header() {
                                                     if(!isActive) handleEntrarNoCentro(centroId);
                                                 }}
                                                 className="btn-dropdown-item"
-                                                style={{
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    alignItems: 'center',
-                                                    width: '100%',
-                                                    opacity: isActive ? 0.7 : 1,
-                                                    cursor: isActive ? 'default' : 'pointer'
-                                                }}
                                             >
                                                 <span><FaBuilding style={{ marginRight: '8px' }}/> {centroNome}</span>
                                                 {isActive && <FaCheck style={{ color: '#10b981' }} />}
@@ -127,7 +143,7 @@ function Header() {
                                     Nenhum centro vinculado
                                 </li>
                             )}
-                            <div className="dropdown-divider" style={{ borderTop: '1px solid #eee', margin: '8px 0' }}></div>
+                            
 
                             <button onClick={toggleTheme} className="btn-theme ">
                                 {theme === 'light' ? <><FaMoon/></> : <><FaSun/></>}

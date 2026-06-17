@@ -13,4 +13,5 @@ urlpatterns = [
     path('', include('unidade.urls')),
     path('', include('desafio.urls')),
     path('', include('categoria.urls')),
+    path('', include('planejamento.urls')),
 ]

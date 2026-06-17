@@ -16,6 +16,7 @@ import DetalhesRisco from "./pages/app/DetalhesRisco.jsx";
 import MatrizRiscos from "./pages/app/MatrizRiscos.jsx"
 import Exportar from "./pages/app/Exportar.jsx";
 import AdminRoute from "./Routes/AdminRoute.jsx";
+import CriarPlanejamento from "./pages/app/CriarPlanejamento.jsx";
 
 function App() {
 
@@ -86,6 +87,7 @@ function App() {
 
                             <Route element={<AdminRoute/>}>
                                 <Route path="/administrador" element={<AdminstradorAcessos/>}/>
+                                <Route path="/planejamento" element={<CriarPlanejamento />} />
                             </Route>
                         </Route>
                     </Route>

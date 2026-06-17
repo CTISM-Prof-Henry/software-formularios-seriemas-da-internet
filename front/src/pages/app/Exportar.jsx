@@ -186,9 +186,13 @@ function ExportacaoDados() {
                                 onChange={(e) => setFiltros({...filtros, categoria: e.target.value})}
                             >
                                 <option value="todas">Todas as Categorias</option>
-                                <option value="operacional">Operacional</option>
-                                <option value="financeiro">Financeiro</option>
-                                <option value="conformidade">Conformidade</option>
+                                <option value="Operacional">Operacional</option>
+                                <option value="Financeiro">Financeiro</option>
+                                <option value="Estratégico">Estratégico</option>
+                                <option value="Legal">Legal</option>
+                                <option value="Imagem">Imagem</option>
+                                <option value="Integridade">Integridade</option>
+                                <option value="Ambiente">Ambiente Extremo</option>
                             </select>
                         </div>
 

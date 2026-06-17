@@ -159,19 +159,6 @@ function Desafios() {
                         );
                     })}
 
-
-                    {isAuditor && (
-                        <div className="desafio-card card-add">
-                            <div className="add-content">
-                                <div className="icon-box-large grey-light">
-                                    <span style={{fontSize: '2rem', color: '#94a3b8'}}>+</span>
-                                </div>
-                                <h3>Novo Desafio</h3>
-                                <p>Adicione um novo objetivo institucional para iniciar o mapeamento de riscos.</p>
-                            </div>
-                        </div>
-                    )}
-
                 </div>
             )}
         </div>
