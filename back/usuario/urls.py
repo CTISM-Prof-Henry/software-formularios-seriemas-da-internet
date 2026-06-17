@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('api/usuarios/', views.listar_usuarios, name='listar_usuarios'),
     path('api/login/', views.fazer_login, name='fazer_login'),
+    path('api/logout/', views.fazer_logout, name='fazer_logout'),
     path('api/usuario/', views.cadastrar_usuario, name='cadastrar_usuario'),
     path('api/recuperar-senha/', views.reset_senha, name='recuperar_senha'),
     path('api/confirmar-senha-nova/', views.confirmar_reset_senha, name='confirar_reset_senha'),

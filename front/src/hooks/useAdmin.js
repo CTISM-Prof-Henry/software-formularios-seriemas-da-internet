@@ -7,37 +7,53 @@ export function useAdmin(limite = 5, termoBusca) {
     const [loading, setLoading] = useState(true)
     const [erro, setErro] = useState(null)
 
+    
     useEffect(() => {
         const fetchDados = async () => {
             try {
                 setLoading(true);
+                setErro(null);
 
-                const resCount = await fetch('http://localhost:8000/api/usuarios/?count-users=True');
-                if (resCount.ok) {
-                    const dadosCount = await resCount.json();
-                    setCountUsuarios(dadosCount.count);
-                }
+                const fetchConfig = {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                };
 
-                const valorLimite = limite || 5
-                let url = `http://localhost:8000/api/usuarios/?limit=${valorLimite}`;
+
+                const params = new URLSearchParams({
+                    limite: limite || 5
+                });
+
                 if (termoBusca) {
-                    url = `http://localhost:8000/api/usuarios/?q=${termoBusca}`;
+                    params.append('q', termoBusca);
                 }
 
-                const resLista = await fetch(url);
-                if (!resLista.ok) throw new Error(`HTTP ${resLista.status}`);
 
-                const dadosLista = await resLista.json();
-                setUsuarios(dadosLista);
+                const res = await fetch(`http://localhost:8000/api/usuarios/?${params.toString()}`,
+                    fetchConfig);
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                const dados = await res.json();
+
+
+                if (dados.results !== undefined) {
+                    setUsuarios(dados.results);
+                    setCountUsuarios(dados.count);
+                } else {
+
+                    setUsuarios(dados);
+                    setCountUsuarios(dados.length);
+                }
 
             } catch (err) {
                 setErro(err.message);
-                console.error("Erro inesperado:", err);
+                console.error("Erro inesperado no useAdmin:", err);
             } finally {
                 setLoading(false);
             }
         };
-
 
         const delay = setTimeout(() => {
             fetchDados();
@@ -46,6 +62,6 @@ export function useAdmin(limite = 5, termoBusca) {
         return () => clearTimeout(delay);
     }, [limite, termoBusca]);
 
+    return { countUsuarios, usuarios, loading, erro };
 
-    return { countUsuarios, usuarios, loading, erro}
 }

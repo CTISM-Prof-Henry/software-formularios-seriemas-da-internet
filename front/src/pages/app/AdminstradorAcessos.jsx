@@ -146,7 +146,7 @@ function AdministradorAcessos() {
 
                     <input
                         type="text"
-                        placeholder="Buscar por nome ou departamento..."
+                        placeholder="Buscar por nome ou email..."
                         value={termoBusca}
                         onChange={(e) => setTermoBusca(e.target.value)}
                     />
@@ -227,9 +227,9 @@ function AdministradorAcessos() {
                                         <td>
                                             <div className="status-cell">
                                                 <span
-                                                className={`status-dot ${user.is_active ? 'dot-active' : 'dot-inactive'}`}></span>
+                                                className={`status-dot ${user.is_online ? 'dot-active' : 'dot-inactive'}`}></span>
                                                 <span
-                                                    className={user.is_active ? 'text-active' : 'text-inactive'}>{user.is_active ? 'Ativo' : 'Inativo'}</span>
+                                                    className={user.is_online ? 'text-active' : 'text-inactive'}>{user.is_online ? 'Ativo' : 'Inativo'}</span>
                                             </div>
                                         </td>
                                         <td>
