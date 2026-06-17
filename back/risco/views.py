@@ -266,13 +266,17 @@ def update_risco_etapa(request, pk):
 
         with transaction.atomic():
             serializer = RiscoSerializer(risco, data=request.data, partial=True)
+
             if serializer.is_valid():
                 risco.versao += 1
                 risco.save()
                 serializer.save()
 
 
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response({
+                    'message': "Etapa atualizada com sucesso!",
+                    'dados': serializer.data
+                }, status=status.HTTP_200_OK)
 
             return Response({"erro": "Dados inválidos", "detalhes": serializer.errors}, status=400)
 
