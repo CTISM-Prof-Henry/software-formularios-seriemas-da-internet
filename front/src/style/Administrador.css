@@ -303,16 +303,14 @@ td {
     }
 }
 
-/* =========================================
-   ESTILOS DO MODAL DE PERMISSÕES
-   ========================================= */
+
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(15, 23, 42, 0.6); /* Fundo escuro transparente */
+    background-color: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(2px);
     display: flex;
     align-items: center;
@@ -322,7 +320,7 @@ td {
 }
 
 .modal-content {
-    background-color: var(--white, #ffffff);
+    background-color: var(--white);
     width: 100%;
     max-width: 450px;
     border-radius: 12px;
@@ -336,7 +334,7 @@ td {
     justify-content: space-between;
     align-items: center;
     padding: 20px 24px;
-    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h3 {
@@ -363,6 +361,27 @@ td {
     padding: 24px;
 }
 
+.modal-title {
+    margin: 0 0 20px 0;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+.modal-warning {
+    background-color: #f0fdf4;
+    border-left: 4px solid #10b981;
+    padding: 10px;
+    margin: 15px;
+    border-radius: 4px;
+
+    & p {
+        font-size: 0.9rem;
+        color: #065f46;
+        margin: 0;
+    }
+}
+
 .modal-subtitle {
     margin: 0 0 20px 0;
     font-size: 0.9rem;
@@ -386,7 +405,7 @@ td {
     border-radius: 8px;
     font-size: 0.95rem;
     color: var(--text-dark, #0f172a);
-    background-color: #f8fafc;
+    background-color: var(--white);
     outline: none;
     cursor: pointer;
 }
@@ -398,7 +417,7 @@ td {
 
 .modal-footer {
     padding: 16px 24px;
-    background-color: #f8fafc;
+    background-color: var(--white);
     border-top: 1px solid var(--border-color, #e2e8f0);
     display: flex;
     justify-content: flex-end;
@@ -417,7 +436,7 @@ td {
 }
 
 .btn-cancelar:hover {
-    background: #e2e8f0;
+    background: var(--text-muted);
 }
 
 .btn-salvar {
@@ -438,6 +457,21 @@ td {
 .btn-salvar:disabled {
     background: #94a3b8;
     cursor: not-allowed;
+}
+
+.btn-concluir {
+    background: var(--success-color);
+    border: none;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-concluir:hover {
+    background-color: rgb(16 185 129 / 0.8);
 }
 
 @keyframes fadeIn {

@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
 from django.db.models import Q, Count, F
 
 from rest_framework import status
@@ -20,6 +21,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER
 
+from planejamento.models import Planejamento
 from risco.models import Risco, RecomendacaoAuditoria
 from risco.serializer import RiscoSerializer, RecomendacaoAuditoriaSerializer
 from usuario.authentications import CsrfExemptSessionAuthentication, IsAuditorPermission
@@ -121,7 +123,7 @@ def listar_riscos(request):
             criticos=Count('id', filter=Q(score__gt=14) | Q(nivel__icontains='crítico')),
             medios=Count('id', filter=Q(score__gt=6, score__lte=14) ),
             em_tratamento=Count('id', filter=Q(status__icontains='trata')),
-            concluidos=Count('id', filter=Q(status__icontains='conclu'))
+            concluidos=Count('id', filter=Q(status__icontains='conclu') | Q(status__icontains='resolvi'))
         )
 
         kpis['total_absoluto'] = riscos.count()
@@ -208,12 +210,23 @@ def create_risco(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    ciclo_ativo = Planejamento.objects.filter(
+        centro=centro_user,
+        status='Ativo'
+    ).first()
+
+    if not ciclo_ativo:
+        return Response(
+            {"erro": "Não há um Ciclo de Planejamento 'Ativo' para o seu Centro no momento. Operação bloqueada."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     try:
         serializer = RiscoSerializer(data=request.data)
 
         if serializer.is_valid():
 
-            serializer.save(centro=centro_user)
+            serializer.save(centro=centro_user, ciclo=ciclo_ativo)
 
             return Response({
                 "message": "Risco criado com sucesso!",
@@ -240,35 +253,77 @@ def update_risco_etapa(request, pk):
 
         risco = Risco.objects.get(pk=pk)
 
+        versao_front = request.data.get('versao')
+
+        if versao_front is not None and int(versao_front) != risco.versao:
+            return Response(
+                {
+                    "erro": "Conflito de Edição",
+                    "detalhes": "Outro gestor alterou este risco enquanto você editava. Atualize a página para ver as mudanças antes de salvar."
+                },
+                status=status.HTTP_409_CONFLICT
+            )
+
+        with transaction.atomic():
+            serializer = RiscoSerializer(risco, data=request.data, partial=True)
+            if serializer.is_valid():
+                risco.versao += 1
+                risco.save()
+                serializer.save()
+
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            return Response({"erro": "Dados inválidos", "detalhes": serializer.errors}, status=400)
+
     except Risco.DoesNotExist:
 
         return Response({
             "erro": "Risco não encontrado no banco de dados."
         }, status=status.HTTP_404_NOT_FOUND)
 
+
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def concluir_risco(request, pk):
+
     try:
+        risco = Risco.objects.get(pk=pk)
 
-        serializer = RiscoSerializer(risco, data=request.data, partial=True)
 
-        if serializer.is_valid():
+        versao_frontend = request.data.get('versao')
+        if versao_frontend is not None and int(versao_frontend) != risco.versao:
 
-            serializer.save()
+            return Response(
+                {"erro": "Conflito de Edição",
+                 "detalhes": "O risco foi alterado por outro utilizador. Atualize a página."},
+                status=status.HTTP_409_CONFLICT
+            )
 
-            return Response({
-                "message": "Etapa atualizada com sucesso!",
-                "risco": serializer.data
-            }, status=status.HTTP_200_OK)
+        if request.user != risco.responsavel and request.user.perfil_acesso not in ['Admin', 'Auditor']:
+            return Response({"erro": "Apenas o responsável ou administradores podem concluir este risco."}, status=403)
+
+        with transaction.atomic():
+            risco.status = 'Resolvido'
+            risco.versao += 1
+
+            risco.data_resolucao = timezone.now()
+
+            risco.save()
 
         return Response({
-            "erro": "Dados inválidos",
-            "detalhes": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            "mensagem": "Risco concluído com sucesso!",
+            "status": risco.status,
+            "versao": risco.versao
+        }, status=status.HTTP_200_OK)
 
+    except Risco.DoesNotExist:
+        return Response({"erro": "Risco não encontrado."}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-
-        return Response({
-            "error": str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -308,7 +363,7 @@ def criar_recomendacao(request, pk):
         risco = Risco.objects.get(pk=pk)
         texto = request.data.get('texto')
 
-        recomendacao = RecomendacaoAuditoria.objects.create(
+        RecomendacaoAuditoria.objects.create(
             risco=risco,
             auditor=request.user,
             texto=texto
@@ -382,6 +437,9 @@ def listar_recomendacoes(request, pk):
 
     except Exception as e:
         return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
 
 
 
@@ -472,6 +530,7 @@ def exportar_riscos_csv(request):
     return response
 
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def exportar_riscos_pdf(request):
@@ -485,9 +544,26 @@ def exportar_riscos_pdf(request):
     colunas_selecionadas = colunas_req.split(',') if colunas_req else []
     lista_impactos = impactos.split(',') if impactos else []
 
-    riscos = Risco.objects.all()
+
+    centro_ativo = getattr(request.user, 'centro_ativo', None)
+    centro_id = centro_ativo.id if hasattr(centro_ativo, 'id') else centro_ativo
 
 
+    ciclo_atual = Planejamento.objects.filter(
+        centro_id=centro_id
+    ).exclude(status='Planejamento').order_by('-ano').first()
+
+    texto_subtitulo = f"Ciclo {ciclo_atual.ano} - {ciclo_atual.titulo}" if ciclo_atual else "Histórico Geral (Sem Ciclo Ativo)"
+
+
+    riscos = Risco.objects.filter(centro=centro_ativo)
+
+    if ciclo_atual:
+        riscos = riscos.filter(ciclo=ciclo_atual)
+    else:
+        riscos = riscos.filter(ciclo__isnull=True)
+
+    # --- Filtros de Data, Categoria e Impacto
     if periodo.isdigit() and int(periodo) < 365:
         data_limite = timezone.now() - timedelta(days=int(periodo))
         riscos = riscos.filter(data_criacao__gte=data_limite)
@@ -511,68 +587,46 @@ def exportar_riscos_pdf(request):
         if query_nivel:
             riscos = riscos.filter(query_nivel)
 
-
+    # --- Inicialização do PDF ---
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="Relatorio_Riscos_Corporativo.pdf"'
     buffer = BytesIO()
-
 
     doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=40, leftMargin=40, topMargin=110,
                             bottomMargin=50)
     elementos = []
     estilos = getSampleStyleSheet()
 
-
+    # --- Estilos (Seu código original) ---
     estilo_titulo = ParagraphStyle(
-        'Titulo',
-        parent=estilos['Title'],
-        fontName='Helvetica-Bold',
-        fontSize=20,
-        textColor=colors.HexColor('#0f172a'),
-        alignment=TA_LEFT,
-        spaceAfter=4
+        'Titulo', parent=estilos['Title'], fontName='Helvetica-Bold', fontSize=20,
+        textColor=colors.HexColor('#0f172a'), alignment=TA_LEFT, spaceAfter=4
     )
 
     estilo_subtitulo = ParagraphStyle(
-        'Sub', parent=estilos['Normal'],
-        fontName='Helvetica', fontSize=14,
-        textColor=colors.HexColor('#2563eb'),
-        alignment=TA_LEFT,
-        spaceAfter=15
+        'Sub', parent=estilos['Normal'], fontName='Helvetica', fontSize=14,
+        textColor=colors.HexColor('#2563eb'), alignment=TA_LEFT, spaceAfter=15
     )
 
     estilo_seccao = ParagraphStyle(
-        'Seccao', parent=estilos['Normal'],
-        fontName='Helvetica-Bold',
-        fontSize=9,
-        textColor=colors.HexColor('#64748b'),
-        alignment=TA_LEFT,
-        spaceAfter=10,
-        textTransform='uppercase'
+        'Seccao', parent=estilos['Normal'], fontName='Helvetica-Bold', fontSize=9,
+        textColor=colors.HexColor('#64748b'), alignment=TA_LEFT, spaceAfter=10, textTransform='uppercase'
     )
 
     estilo_celula = ParagraphStyle(
-        'Celula',
-        parent=estilos['Normal'],
-        fontName='Helvetica',
-        fontSize=9,
-        textColor=colors.HexColor('#334155'),
-        leading=12
+        'Celula', parent=estilos['Normal'], fontName='Helvetica', fontSize=9,
+        textColor=colors.HexColor('#334155'), leading=12
     )
 
     estilo_id = ParagraphStyle(
-        'ID',
-        parent=estilos['Normal'],
-        fontName='Courier-Bold',
-        fontSize=9,
-        textColor=colors.HexColor('#64748b')
+        'ID', parent=estilos['Normal'], fontName='Courier-Bold', fontSize=9, textColor=colors.HexColor('#64748b')
     )
 
-
+    # --- LAYOUT FIXO (Cabeçalho e Rodapé) ---
     def desenhar_layout_fixo(canvas, documento):
         canvas.saveState()
 
-        # --- MARCA DE ÁGUA DIAGONAL ---
+        # Marca de Água
         canvas.setFont("Helvetica-Bold", 70)
         canvas.setFillColor(colors.Color(0.9, 0.9, 0.9, alpha=0.25))
         canvas.translate(250, 150)
@@ -581,16 +635,19 @@ def exportar_riscos_pdf(request):
         canvas.restoreState()
 
         canvas.saveState()
-        # --- CABEÇALHO (Esquerda )
+        # CABEÇALHO (Esquerda)
         canvas.setFont("Helvetica-Bold", 11)
         canvas.setFillColor(colors.HexColor('#0f172a'))
-        canvas.drawString(40, doc.pagesize[1] - 40, "GESTOR DE RISCO")
+
+        # 🟢 3. Mostrar o nome do Centro no Cabeçalho Superior
+        nome_centro = centro_ativo.nome if hasattr(centro_ativo, 'nome') else getattr(centro_ativo, 'sigla', 'Geral')
+        canvas.drawString(40, doc.pagesize[1] - 40, f"GESTOR DE RISCO - {nome_centro.upper()}")
 
         canvas.setFont("Helvetica", 8)
         canvas.setFillColor(colors.HexColor('#64748b'))
         canvas.drawString(40, doc.pagesize[1] - 52, "Sistema Institucional de Resiliência")
 
-        # --- CABEÇALHO (Direita) ---
+        # CABEÇALHO (Direita)
         hoje = timezone.now().strftime("%d/%m/%Y")
         usuario = request.user.get_full_name() or request.user.username
         doc_id = f"SEC-{timezone.now().strftime('%Y-%H%M')}"
@@ -607,22 +664,27 @@ def exportar_riscos_pdf(request):
         canvas.drawRightString(doc.pagesize[0] - 40, doc.pagesize[1] - 52, usuario)
         canvas.drawRightString(doc.pagesize[0] - 40, doc.pagesize[1] - 64, doc_id)
 
-        # --- RODAPÉ ---
+        # RODAPÉ
         canvas.setStrokeColor(colors.HexColor('#cbd5e1'))
         canvas.line(40, 45, doc.pagesize[0] - 40, 45)
 
         canvas.drawString(40, 30, "🔒 USO INTERNO RESTRITO")
+
+        # 🟢 4. Adicionar o ano do ciclo no rodapé como metadado de segurança
+        ano_rodape = f" | Ref: Ciclo {ciclo_atual.ano}" if ciclo_atual else ""
+        canvas.drawString(160, 30, f"Confidencialidade Rigorosa{ano_rodape}")
+
         canvas.drawRightString(doc.pagesize[0] - 40, 30, f"Página {documento.page}")
 
         canvas.restoreState()
 
-
+    # --- MONTAGEM DO DOCUMENTO ---
     elementos.append(Paragraph("Relatório Consolidado de Riscos", estilo_titulo))
-    elementos.append(Paragraph("Ciclo Atual", estilo_subtitulo))
 
-    # Linha azul escura por baixo do título
+
+    elementos.append(Paragraph(texto_subtitulo, estilo_subtitulo))
+
     elementos.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#0f172a'), spaceAfter=20))
-
     elementos.append(Paragraph("DETALHAMENTO PRIORITÁRIO", estilo_seccao))
 
     # Tabela
@@ -637,9 +699,7 @@ def exportar_riscos_pdf(request):
         cabecalho = list(mapa_colunas.values())
         colunas_selecionadas = list(mapa_colunas.keys())
 
-    # Cabeçalho
     dados_tabela = [[Paragraph(f"<b>{col}</b>", estilo_celula) for col in cabecalho]]
-
 
     def formatar_nivel(nivel):
         n = str(nivel).upper()
@@ -653,44 +713,30 @@ def exportar_riscos_pdf(request):
             return f'<font color="#2563eb"><b>▼ {nivel}</b></font>'
         return str(nivel)
 
-    # 8. Preenchimento de Dados
     if not riscos.exists():
-        print(riscos)
         linha_vazia = [Paragraph('Nenhum registo encontrado com os filtros atuais.', estilo_celula)] + [''] * (
                     len(cabecalho) - 1)
         dados_tabela.append(linha_vazia)
-
     else:
         for risco in riscos:
             linha = []
-
             if 'id' in colunas_selecionadas:
                 linha.append(Paragraph(str(risco.id_estrutural or risco.id), estilo_id))
-
             if 'descricao' in colunas_selecionadas:
                 linha.append(Paragraph(risco.descricao or 'Sem descrição', estilo_celula))
-
             if 'categoria' in colunas_selecionadas:
                 cat = str(risco.categoria).upper() if risco.categoria else 'N/A'
                 linha.append(Paragraph(f'<font color="#1e40af"><b>{cat}</b></font>', estilo_celula))
-
             if 'criticidade' in colunas_selecionadas:
                 linha.append(Paragraph(formatar_nivel(risco.nivel or '-'), estilo_celula))
-
             if 'status' in colunas_selecionadas:
                 linha.append(Paragraph(risco.status or '-', estilo_celula))
-
             if 'responsavel' in colunas_selecionadas:
                 linha.append(Paragraph(risco.responsavel.first_name if risco.responsavel else 'N/A', estilo_celula))
-
             if 'dataCriacao' in colunas_selecionadas:
                 linha.append(
-                    Paragraph(
-                        risco.data_criacao.strftime('%d/%m/%Y') if getattr(risco, 'data_criacao', None) else '-',
-                              estilo_celula
-                    )
-                )
-
+                    Paragraph(risco.data_criacao.strftime('%d/%m/%Y') if getattr(risco, 'data_criacao', None) else '-',
+                              estilo_celula))
             if 'planoAcao' in colunas_selecionadas:
                 linha.append(Paragraph(risco.acao_tratamento or '-', estilo_celula))
 
@@ -699,36 +745,27 @@ def exportar_riscos_pdf(request):
     # Estilização da Tabela
     tabela = Table(dados_tabela, repeatRows=1)
     tabela.setStyle(TableStyle([
-        # Cabeçalho
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#f8fafc')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor('#475569')),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
         ('TOPPADDING', (0, 0), (-1, 0), 10),
-
-        # Linha inferior do Cabeçalho mais forte
         ('LINEBELOW', (0, 0), (-1, 0), 1.5, colors.HexColor('#cbd5e1')),
-
-        # Margens internas e alinhamento das células de dados
         ('TOPPADDING', (0, 1), (-1, -1), 12),
         ('BOTTOMPADDING', (0, 1), (-1, -1), 12),
-
-        # Linha horizontal suave a separar as linhas de registo
         ('LINEBELOW', (0, 1), (-1, -1), 0.5, colors.HexColor('#e2e8f0')),
     ]))
 
     elementos.append(tabela)
 
-    # Contador de registos no final
     if riscos.exists():
         elementos.append(Spacer(1, 15))
         elementos.append(Paragraph(
-            f"<font color='#64748b' size='8'>Mostrando {riscos.count()} registos de riscos consolidados.</font>",
+            f"<font color='#64748b' size='8'>Mostrando {riscos.count()} registos do {texto_subtitulo}.</font>",
             ParagraphStyle('R', alignment=TA_RIGHT))
         )
 
-    # Geração Final
     doc.build(elementos, onFirstPage=desenhar_layout_fixo, onLaterPages=desenhar_layout_fixo)
 
     response.write(buffer.getvalue())

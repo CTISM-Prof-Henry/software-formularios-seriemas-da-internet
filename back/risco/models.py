@@ -1,5 +1,6 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
+from planejamento.models import Planejamento
 from usuario.models import Centro, Usuario
 
 
@@ -49,8 +50,11 @@ class Risco(models.Model):
     status_tratamento = models.CharField(max_length=50, default="Não Iniciado")
     resultados_alcancados = models.TextField(null=True, blank=True)
     data_proxima_avaliacao = models.DateField(null=True, blank=True)
+    data_resolucao = models.DateField(null=True, blank=True)
 
+    versao = models.IntegerField(default=1)
     history = HistoricalRecords()
+    ciclo = models.ForeignKey('planejamento.Planejamento', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.codigo or 'S/C'} - {self.descricao[:30]}..."

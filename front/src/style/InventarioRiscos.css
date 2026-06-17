@@ -291,6 +291,33 @@
 }
 
 
+
+.inventario-container .linha-resolvido {
+    background-color: var(--badge-bg);
+    opacity: 0.6;
+}
+
+
+.inventario-container .linha-resolvido td {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    text-decoration-color: var(--text-muted);
+}
+
+
+.inventario-container .linha-resolvido:hover {
+    opacity: 0.8;
+}
+
+/* Opcional: Se quiser um tom verde específico mas adaptado: */
+/* .linha-resolvido {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-left: 3px solid #10b981;
+}
+*/
+
+
+
 .inventario-container .border-red { border-left-color: var(--brand-red); }
 .inventario-container .border-blue { border-left-color: var(--brand-light-blue); }
 .inventario-container .border-green { border-left-color: var(--success-color); }

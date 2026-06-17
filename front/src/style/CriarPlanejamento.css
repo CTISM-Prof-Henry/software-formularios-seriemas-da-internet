@@ -1,0 +1,147 @@
+
+
+
+.form-group.grupo-ano {
+    flex: 0 0 150px;
+}
+
+.form-group.grupo-titulo {
+    flex: 1;
+}
+
+
+.mensagem-erro-planejamento {
+    color: #dc2626;
+    margin-bottom: 15px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    background-color: #fef2f2;
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 4px solid #dc2626;
+}
+
+
+.botoes-acao-planejamento {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+
+.loading-ciclo {
+    text-align: center;
+    margin-top: 50px;
+    color: var(--text-muted, #666);
+    font-weight: 500;
+}
+
+
+.aviso-encerrado {
+    background-color: #fef2f2;
+    border-left: 4px solid #dc2626;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.aviso-encerrado p {
+    margin: 0;
+    color: #991b1b;
+    font-weight: bold;
+}
+
+
+.btn-encerrar {
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.btn-encerrar:hover:not(:disabled) {
+    background-color: #b91c1c;
+}
+
+.btn-encerrar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+.modal-sucesso-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.modal-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 10px 0;
+}
+
+.modal-icon-success {
+    background-color: #e6f4ea;
+    color: #137333;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.modal-icon-encerrar {
+    background-color: var(--light-red);
+    color: red;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.modal-sucesso-body {
+    padding: 10px 20px;
+}
+
+.modal-sucesso-body h3 {
+    color: var(--text-dark, #333);
+    margin-bottom: 10px;
+}
+
+.modal-sucesso-body p {
+    color: var(--text-muted, #666);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.modal-sucesso-footer {
+    justify-content: center;
+    border-top: none;
+    padding: 15px 20px 25px 20px;
+}
+
+.btn-modal-ok {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.btn-modal-ok:hover {
+    background-color: #059669;
+}

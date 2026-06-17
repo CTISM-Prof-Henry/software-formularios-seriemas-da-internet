@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'usuario',
     'relatorio',
+    'planejamento',
     'unidade',
     'risco',
     'categoria',

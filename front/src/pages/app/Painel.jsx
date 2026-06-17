@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom'
 import '../../style/Painel.css'
+import '../../style/InventarioRiscos.css'
 import {useRiscos} from "../../hooks/useRiscos.js";
 import {usePainel} from "../../hooks/usePainel.js"
 import {useState} from "react"
@@ -29,7 +30,7 @@ function Painel() {
     const riscosCriticos = listaRiscos.filter(r => r.nivel >= 12 && r.nivel < 20 || r.nivel >= 20).length;
     const riscosEmTratamento = listaRiscos.filter(r => r.status === 'Tratamento' ||
         r.status === 'Identificação' || r.status === 'Avaliação').length;
-    const riscosConcluidos = listaRiscos.filter(r => r.status === 'Concluído').length;
+    const riscosConcluidos = listaRiscos.filter(r => r.status === 'Concluído' || r.status === 'Resolvido').length;
 
 
 
@@ -121,7 +122,10 @@ function Painel() {
                         <tbody>
                         {listaRiscos.length > 0 ? (
                             listaRiscos.map((risco, index) => (
-                                <tr key={risco.id || index}>
+                                <tr
+                                    key={risco.id || index}
+                                    className={risco.status === 'Resolvido' ? 'linha-resolvido' : ''}
+                                >
 
                                     <td><strong>{risco.codigo || `R-${risco.id || 'N/D'}`}</strong></td>
 

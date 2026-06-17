@@ -5,6 +5,8 @@ import {FiFileText, FiTarget, FiActivity, FiShield, FiAlertOctagon} from "react-
 import {MdEdit} from 'react-icons/md';
 import {CiClock2, CiFlag1} from "react-icons/ci";
 import {TfiReload} from "react-icons/tfi";
+import {GoShieldCheck} from "react-icons/go";
+import {MdClose} from "react-icons/md";
 import {getCookie, useAuth} from "../../hooks/AuthContext.jsx";
 
 function DetalhesRisco() {
@@ -19,13 +21,16 @@ function DetalhesRisco() {
 
 
     const [nomeCategoria, setNomeCategoria] = useState('Carregando...');
-    const [desafio , setDesafio] = useState('Carregando...')
+    const [desafio, setDesafio] = useState('Carregando...')
     const [nomeResponsavel, setNomeResponsavel] = useState('Carregando...');
     const [iniciaisResponsavel, setIniciaisResponsavel] = useState('--');
     const [nomeUnidade, setNomeUnidade] = useState('Carregando...');
 
     const [recomendacoes, setRecomendacoes] = useState([]);
     const [novoTexto, setNovoTexto] = useState('');
+
+    const [modalConcluirAberto, setModalConcluirAberto] = useState(false);
+    const [isConcluindo, setIsConcluindo] = useState(false);
 
     const isAuditor = usuario?.perfil_acesso?.toLowerCase() === 'auditor';
 
@@ -131,7 +136,7 @@ function DetalhesRisco() {
                         ))
                         .catch(() => setDesafio('Erro ao carregar'));
                 } else {
-                    setDesafio(dados.desafio ||  'Não vinculado');
+                    setDesafio(dados.desafio || 'Não vinculado');
                 }
 
                 const idResponsavel = dados.responsavel;
@@ -196,6 +201,46 @@ function DetalhesRisco() {
         return matrizCores[prob][imp - 1];
     };
 
+    const handleConcluirRisco = async () => {
+
+        setIsConcluindo(true)
+
+        try {
+            const csrfToken = getCookie('csrftoken');
+
+            const response = await fetch(`http://localhost:8000/api/risco/${risco.id}/concluir/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include',
+
+                body: JSON.stringify({versao: risco.versao})
+            });
+
+            const dados = await response.json();
+
+            if (response.ok) {
+                console.log(dados.mensagem);
+
+                setRisco(prev => ({
+                    ...prev,
+                    status: dados.status,
+                    versao: dados.versao
+                }));
+
+                setIsConcluindo(false)
+            } else {
+                alert("Erro: " + (dados.erro || dados.detalhes || "Não foi possível concluir o risco."));
+            }
+        } catch (error) {
+            console.error("Erro ao conectar com o servidor:", error);
+            alert("Erro de conexão com o servidor.");
+        }
+    };
+
+
     return (
         <div className="detalhes-container">
             <div className="breadcrumb">
@@ -216,16 +261,24 @@ function DetalhesRisco() {
                             <span className={`badge ${risco.nivel >= 15 ? 'badge-critical' : 'badge-warning'}`}>
                                 <span className="dot"></span> {risco.status || 'Não avaliado'}
                             </span>
-                            <span className={`badge badge-outline`}>
-                                Tratamento: {risco.status_tratamento || 'Não Iniciado'}
-                            </span>
                         </div>
                         <h1>{risco.titulo}</h1>
                     </div>
                     <div className="header-actions">
+
+                        {risco?.status !== 'Resolvido' && (
+                            <button
+                                onClick={() => setModalConcluirAberto(true)}
+                                className="btn-concluir"
+                            >
+                                Marcar como Resolvido
+                            </button>
+                        )}
+
                         <button
                             className="btn btn-outline"
                             onClick={() => navigate(`/editar-risco/${risco.id}`)}
+                            disabled={risco?.status === 'Resolvido'}
                         >
                             <MdEdit/> Editar Risco
                         </button>
@@ -376,7 +429,9 @@ function DetalhesRisco() {
                                     <p><strong>{risco.impacto_residual ? `${risco.impacto_residual} / 5` : '-'}</strong>
                                     </p>
                                 </div>
+
                             </div>
+
                         </div>
                     </div>
 
@@ -515,6 +570,52 @@ function DetalhesRisco() {
                     </div>
                 </div>
             </div>
+
+
+            {modalConcluirAberto && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>Concluir Risco</h3>
+                            <button className="btn-close" onClick={() => setModalConcluirAberto(false)}
+                                    disabled={isConcluindo}>
+                                <MdClose/>
+                            </button>
+                        </div>
+
+                        <div className="modal-body">
+                            <p className="modal-title">
+                                Tem certeza que deseja marcar o risco <strong>{risco?.titulo}</strong> como Resolvido?
+                            </p>
+
+                            <div className="modal-warning">
+                                <p>
+                                    <strong>Atenção:</strong> Esta ação indica que o plano de tratamento foi finalizado
+                                    com sucesso. O risco ficará bloqueado para novas edições e passará para o histórico
+                                    concluído.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="modal-footer">
+                            <button
+                                className="btn-cancelar"
+                                onClick={() => setModalConcluirAberto(false)}
+                                disabled={isConcluindo}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className="btn-salvar"
+                                onClick={handleConcluirRisco}
+                                disabled={isConcluindo}
+                            >
+                                {isConcluindo ? 'Concluindo...' : 'Confirmar Resolução'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
