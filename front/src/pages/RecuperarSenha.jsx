@@ -6,12 +6,14 @@ function RecuperarSenha() {
     const[email, setEmail] = useState('')
     const[erro, setErro] = useState('')
     const[sucesso, setSucesso] = useState(false)
+    const[enviando, setEnviando] = useState(false)
 
 
     const recuperar = async (evento) => {
         evento.preventDefault()
 
         try {
+            setEnviando(true)
 
             const resposta = await
                 fetch("http://127.0.0.1:8000/api/recuperar-senha/", {
@@ -31,11 +33,13 @@ function RecuperarSenha() {
 
             } else {
 
+
                 setErro("Não existe um usuario com esse email!");
                 console.log("Não existe um usuario com esse email!")
+                console.log(resposta.json())
             }
         } catch (erro) {
-
+            setEnviando(false)
             console.log("Nao foi possivel conectar com o servidor!", erro);
         }
     }
@@ -67,7 +71,9 @@ function RecuperarSenha() {
                             {erro && <p style={{color: 'red'}}>{erro}</p>}
 
                             <div className="post-btn">
-                                <button type="submit">Enviar link</button>
+                                <button type="submit" disabled={enviando}>
+                                    {enviando ? 'Enviando E-mail...' : 'Enviar Link'}
+                                </button>
                             </div>
                         </form>
                     )}

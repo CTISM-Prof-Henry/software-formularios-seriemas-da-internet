@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinição de Senha</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+        .email-header {
+            background-color: #0f172a; /* Cor dark industrial igual ao cabeçalho do sistema */
+            padding: 24px;
+            text-align: center;
+        }
+        .email-header h2 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .email-body {
+            padding: 32px 40px;
+            color: #334155;
+            line-height: 1.6;
+        }
+        .email-body p {
+            margin: 0 0 20px 0;
+            font-size: 1rem;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn-reset {
+            background-color: #2563eb; /* Azul corporativo */
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 12px 32px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+            transition: background-color 0.2s;
+        }
+        .email-footer {
+            background-color: #f8fafc;
+            padding: 20px 40px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .warning-text {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 15px;
+            margin-top: 25px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h2>GESTOR DE RISCO</h2>
+        </div>
+        <div class="email-body">
+            <p>Olá, <strong>{{ nome }}</strong>,</p>
+            <p>Recebemos uma solicitação para redefinir a senha da sua conta no Sistema de Gestão de Riscos.</p>
+            <p>Para prosseguir com a alteração, clique no botão seguro abaixo:</p>
+
+            <div class="btn-container">
+                <a href="{{ link_reset }}" class="btn-reset" target="_blank">Redefinir Minha Senha</a>
+            </div>
+
+            <p>Este link é de uso único e expira em breve por motivos de segurança.</p>
+
+            <p class="warning-text">Se você não solicitou esta alteração, por favor ignore este e-mail. Nenhuma ação será realizada na sua conta.</p>
+        </div>
+        <div class="email-footer">
+            <p>Sistema Institucional de Resiliência &copy; 2026</p>
+            <p>Este é um e-mail automático, por favor não responda.</p>
+        </div>
+    </div>
+</body>
+</html>
