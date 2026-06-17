@@ -12,7 +12,7 @@ from django.db import transaction
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.db.models import Q
 
 from rest_framework import status
@@ -30,47 +30,62 @@ from unidade.models import Unidade
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def listar_usuarios(request):
+    usuario_logado = request.user
+    centro_auditor = usuario_logado.centro_ativo
 
-    usuarios_validos = Usuario.objects.select_related('unidade_ativa').exclude(
-        Q(first_name__isnull=True) | Q(first_name__exact='') |
-        Q(matricula__isnull=True) | Q(matricula__exact='') |
-        Q(unidade_ativa__isnull=True)
-    ).order_by('-id')
 
-    if request.GET.get('count-users'):
-        count = usuarios_validos.count()
-        return Response({"count": count}, status=status.HTTP_200_OK)
+    if not centro_auditor:
+        return Response({"erro": "Nenhum centro selecionado."}, status=400)
 
-    query = request.GET.get('q', '')
-    limit = request.GET.get('limit')
+    usuarios = Usuario.objects.filter(centro_ativo=centro_auditor).order_by('first_name')
 
-    if query:
-        usuarios_validos = usuarios_validos.filter(
-            Q(first_name__icontains=query) |
-            Q(last_name__icontains=query) |
-            Q(unidade_ativa__nome_unidade__icontains=query)
+    termo = request.GET.get('q', '').strip()
+
+    if termo:
+        usuarios = usuarios.filter(
+            Q(first_name__icontains=termo) |
+            Q(last_name__icontains=termo) |
+            Q(email__icontains=termo)
         )
 
-    if limit:
-        try:
-            usuarios_validos = usuarios_validos[:int(limit)]
-        except ValueError:
-            pass
+    limite = request.GET.get('limite', 5)
 
-    serializer = UsuarioSerializer(usuarios_validos, many=True)
-    return Response(serializer.data)
+    try:
+        limite = int(limite)
+    except ValueError:
+        limite = 5
+
+    total_usuarios = usuarios.count()
+    usuarios_paginados = usuarios[:limite]
+
+
+    serializer = UsuarioSerializer(usuarios_paginados, many=True)
+
+    return Response({
+        "count": total_usuarios,
+        "results": serializer.data
+    }, status=200)
+
+
+
 
 
 @api_view(['GET'])
 def buscar_usuarios_by_name(request):
+    usuario = request.user
+    centro = usuario.centro_ativo
 
+    if not centro:
+        return Response({"erro": "Nenhum centro selecionado."}, status=400)
+    
     query = request.GET.get('q', '')
 
     if len(query) < 2:
         return Response([])
 
-    usuarios = Usuario.objects.filter(first_name__icontains=query)[:10]
+    usuarios = Usuario.objects.filter(first_name__icontains=query, centro_ativo=centro)[:10]
 
     resultados = []
     for u in usuarios:
@@ -197,6 +212,8 @@ def fazer_login(request):
 
                 usuario.last_login = timezone.now()
                 usuario.save(update_fields=['last_login'])
+                usuario.is_online = True
+                usuario.save(update_fields=['is_online'])
 
                 return JsonResponse({
                     'mensagem': 'Login realizado com sucesso',
@@ -217,6 +234,27 @@ def fazer_login(request):
         return JsonResponse({
             'erro': 'Falha do servidor'
         }, status=500)
+
+
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def fazer_logout(request):
+    try:
+
+        usuario = request.user
+
+        usuario.is_online = False
+        usuario.save(update_fields=['is_online'])
+
+        logout(request)
+
+        return JsonResponse({'mensagem': 'Logout realizado com sucesso'}, status=200)
+
+    except Exception as e:
+        print(f"ERRO AO FAZER LOGOUT: {e}")
+        return JsonResponse({'erro': 'Falha no servidor ao tentar sair'}, status=500)
 
 
 

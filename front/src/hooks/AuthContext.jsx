@@ -75,13 +75,34 @@ export function AuthProvider({ children }) {
     };
 
 
-    const fazerLogout = (event) => {
+    const fazerLogout = async (event) => {
         if (event) event.preventDefault();
+        const csrfToken = getCookie('csrftoken')
 
-        setUsuario(null);
-        localStorage.removeItem('uid');
-        navigate('/');
-    };
+        try {
+
+            const response = await fetch("http://localhost:8000/api/logout/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include'
+            })
+
+            if (response.ok) {
+                localStorage.clear()
+                sessionStorage.clear();
+                setUsuario(null)
+                navigate("/")
+            } else {
+                console.log("Erro ao fazer logout no servidor")
+            }
+
+        } catch (erro) {
+            console.log("Erro conexão", erro)
+        }
+    }
 
     return (
 

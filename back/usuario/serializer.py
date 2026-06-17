@@ -26,7 +26,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'centros_permitidos',
             'unidade_ativa',
             'unidades_permitidas',
-            'is_active',
+            'is_online'
         ]
 
         extra_kwargs = {
