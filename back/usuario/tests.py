@@ -41,21 +41,29 @@ class UsuarioViewsTestCase(APITestCase):
 
 
         self.url_listar = reverse('listar_usuarios')
-        self.url_buscar_nome = reverse('buscar_usuarios')
+        self.url_buscar_nome = reverse('buscar_usuarios_by_name')
         self.url_login = reverse('fazer_login')
         self.url_cadastrar = reverse('cadastrar_usuario')
-        self.url_reset = reverse('recuperar_senha')
-        # self.url_confirmar_reset = reverse('confirmar_reset_senha')
-
+        self.url_reset = reverse('reset_senha')
+        self.url_confirmar_reset = reverse('confirmar_reset_senha')
 
     def test_listar_usuarios_sucesso(self):
+        self.client.force_authenticate(user=self.usuario)
 
         response = self.client.get(self.url_listar)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(len(response.data) > 0)
-        self.assertEqual(response.data[0]['first_name'], "João")
+        self.assertIn('count', response.data)
+        self.assertIn('results', response.data)
+
+        resultados = response.data['results']
+
+        self.assertTrue(len(resultados) > 0)
+        self.assertEqual(resultados[0]['first_name'], "João")
+        self.assertGreaterEqual(response.data['count'], 1)
 
     def test_listar_usuarios_count(self):
+        self.client.force_authenticate(user=self.usuario)
 
         response = self.client.get(self.url_listar, {'count-users': 'true'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,12 +71,14 @@ class UsuarioViewsTestCase(APITestCase):
         self.assertEqual(response.data['count'], 1)
 
     def test_buscar_usuarios_by_name_curto(self):
+        self.client.force_authenticate(user=self.usuario)
 
         response = self.client.get(self.url_buscar_nome, {'q': 'J'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, [])
 
     def test_buscar_usuarios_by_name_valido(self):
+        self.client.force_authenticate(user=self.usuario)
 
         response = self.client.get(self.url_buscar_nome, {'q': 'Joã'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -155,29 +165,29 @@ class UsuarioViewsTestCase(APITestCase):
         self.assertEqual(response.data['erro'], "É obrigatório selecionar um Centro/Unidade.")
 
 
-    # def test_reset_senha_envio_email(self):
-    #
-    #     payload = {'email': 'teste@ufsm.br'}
-    #     response = self.client.post(self.url_reset, data=payload, format='json')
-    #
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(len(mail.outbox), 1)
-    #     self.assertIn('Redefinicao de Senha', mail.outbox[0].subject)
-    #
-    # def test_confirmar_reset_senha_sucesso(self):
-    #
-    #     uid = urlsafe_base64_encode(force_bytes(self.usuario.pk))
-    #     token = default_token_generator.make_token(self.usuario)
-    #
-    #
-    #     payload = {
-    #         'uid': uid,
-    #         'token': token,
-    #         'nova_senha': 'NovaSenhaSegura2026!'
-    #     }
-    #     response = self.client.post(self.url_confirmar_reset, data=payload, format='json')
-    #
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #
-    #     self.usuario.refresh_from_db()
-    #     self.assertTrue(self.usuario.check_password('NovaSenhaSegura2026!'))
+    def test_reset_senha_envio_email(self):
+
+        payload = {'email': 'teste@ufsm.br'}
+        response = self.client.post(self.url_reset, data=payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Redefinição de Senha', mail.outbox[0].subject)
+
+    def test_confirmar_reset_senha_sucesso(self):
+
+        uid = urlsafe_base64_encode(force_bytes(self.usuario.pk))
+        token = default_token_generator.make_token(self.usuario)
+
+
+        payload = {
+            'uid': uid,
+            'token': token,
+            'nova_senha': 'NovaSenhaSegura2026!'
+        }
+        response = self.client.post(self.url_confirmar_reset, data=payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.usuario.refresh_from_db()
+        self.assertTrue(self.usuario.check_password('NovaSenhaSegura2026!'))
